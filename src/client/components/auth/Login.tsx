@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AuthForm from './AuthForm';
+import { useMutation } from '@apollo/client';
+import { SIGN_UP } from '../../../apollo/auth';
+import { AuthResult, MutationSignupArgs } from '../../../apollo/types';
 import Loader from '../Loader';
 
 export default function Login() {
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [addUser, { loading, error }] = useMutation<{ signup: AuthResult }, MutationSignupArgs>(SIGN_UP);
 
-  const handleSubmit = () => {
-    setIsLoading(true);
-  };
-
-  if (isLoading) {
+  if (loading) {
     return <Loader />;
   }
 
-  return (
-    <AuthForm handleFormSubmit={handleSubmit} error={error} setError={setError} buttonTitle="login" title="Sign in" />
-  );
+  return <AuthForm operation={addUser} error={error} buttonTitle="login" title="Sign in" />;
 }

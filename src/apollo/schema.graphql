@@ -1,0 +1,223 @@
+type DeleteResult {
+  affected: Int!
+}
+
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+type AuthResult {
+  user: User!
+  access_token: String!
+}
+
+type Query {
+  login(auth: AuthInput!): AuthResult!
+  cvs: [Cv!]!
+  cv(id: ID!): Cv!
+  departments: [Department!]!
+  languages: [Language]!
+  positions: [Position!]!
+  position(id: ID!): Position!
+  projects: [Project!]!
+  project(id: ID!): Project!
+  skills: [Skill!]!
+  users: [User!]!
+  user(id: ID!): User!
+}
+
+type Mutation {
+  signup(auth: AuthInput!): AuthResult!
+  createCv(cv: CvInput!): Cv!
+  updateCv(id: ID!, cv: CvInput!): Cv!
+  deleteCv(id: ID!): DeleteResult!
+  unbindCv(id: ID!): Cv!
+  createDepartment(department: DepartmentInput!): Department!
+  updateDepartment(id: ID!, department: DepartmentInput!): Department!
+  deleteDepartment(id: ID!): DeleteResult!
+  createLanguage(language: LanguageInput!): Language!
+  updateLanguage(id: ID!, language: LanguageInput!): Language!
+  deleteLanguage(id: ID!): DeleteResult!
+  createPosition(position: PositionInput!): Position!
+  updatePosition(id: ID!, position: PositionInput!): Position!
+  deletePosition(id: ID!): DeleteResult!
+  uploadAvatar(id: ID!, avatar: AvatarInput!): String!
+  deleteAvatar(id: ID!): Void
+  createProject(project: ProjectInput!): Project!
+  updateProject(id: ID!, project: ProjectInput!): Project!
+  deleteProject(id: ID!): DeleteResult!
+  createSkill(skill: SkillInput!): Skill!
+  updateSkill(id: ID!, skill: SkillInput!): Skill!
+  deleteSkill(id: ID!): DeleteResult!
+  createUser(user: CreateUserInput!): User!
+  updateUser(id: ID!, user: UpdateUserInput!): User!
+  deleteUser(id: ID!): DeleteResult!
+}
+
+type Cv {
+  id: ID!
+  created_at: String!
+  name: String!
+  description: String!
+  user: User
+  projects: [Project!]
+  skills: [SkillMastery!]!
+  languages: [LanguageProficiency!]!
+  is_template: Boolean!
+}
+
+input CvInput {
+  name: String!
+  description: String!
+  userId: ID
+  projectsIds: [ID!]!
+  skills: [SkillMasteryInput!]!
+  languages: [LanguageProficiencyInput!]!
+  is_template: Boolean!
+}
+
+type Department {
+  id: ID!
+  created_at: String!
+  name: String!
+}
+
+input DepartmentInput {
+  name: String!
+}
+
+type Language {
+  id: ID!
+  created_at: String!
+  iso2: String!
+  name: String!
+  native_name: String
+}
+
+input LanguageInput {
+  iso2: String!
+  name: String!
+  native_name: String
+}
+
+type LanguageProficiency {
+  language_name: String!
+  proficiency: String!
+}
+
+input LanguageProficiencyInput {
+  language_name: String!
+  proficiency: String!
+}
+
+type Position {
+  id: ID!
+  created_at: String!
+  name: String!
+}
+
+input PositionInput {
+  name: String!
+}
+
+type Profile {
+  id: ID!
+  created_at: String!
+  first_name: String
+  last_name: String
+  full_name: String
+  avatar: String
+  skills: [SkillMastery!]!
+  languages: [LanguageProficiency!]!
+}
+
+input ProfileInput {
+  first_name: String
+  last_name: String
+  skills: [SkillMasteryInput!]
+  languages: [LanguageProficiencyInput!]
+}
+
+# The `Void` scalar type represents a null variable.
+scalar Void
+
+input AvatarInput {
+  base64: String!
+  size: Int!
+  type: String!
+}
+
+type Project {
+  id: ID!
+  created_at: String!
+  name: String!
+  internal_name: String
+  description: String!
+  domain: String!
+  start_date: String!
+  end_date: String
+  team_size: Int!
+  tech_stack: [Skill!]
+}
+
+input ProjectInput {
+  name: String!
+  internal_name: String
+  description: String!
+  domain: String!
+  start_date: String!
+  end_date: String
+  team_size: Int!
+  skillsIds: [ID!]!
+}
+
+type Skill {
+  id: ID!
+  created_at: String!
+  name: String!
+}
+
+input SkillInput {
+  name: String!
+}
+
+type SkillMastery {
+  skill_name: String!
+  mastery: String!
+}
+
+input SkillMasteryInput {
+  skill_name: String!
+  mastery: String!
+}
+
+type User {
+  id: ID!
+  created_at: String!
+  email: String!
+  is_verified: Boolean!
+  profile: Profile!
+  cvs: [Cv!]
+  department: Department
+  department_name: String
+  position: Position
+  position_name: String
+  role: String!
+}
+
+input CreateUserInput {
+  auth: AuthInput!
+  profile: ProfileInput!
+  cvsIds: [String!]!
+  departmentId: ID
+  positionId: ID
+  role: String!
+}
+
+input UpdateUserInput {
+  profile: ProfileInput!
+  cvsIds: [String!]
+  departmentId: ID
+  positionId: ID
+}

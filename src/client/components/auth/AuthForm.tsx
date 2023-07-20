@@ -4,16 +4,17 @@ import { Box, Button, Container, IconButton, InputAdornment, TextField, Typograp
 import AuthSwitch from './AuthSwitch';
 import ErrorBar from '../ErrorBar';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { MutationSignupArgs, AuthResult } from '../../../apollo/types';
+import { ApolloError, MutationFunction } from '@apollo/client';
 
 interface AuthFormProps {
-  error: string | null;
-  setError: (error: string | null) => void;
   buttonTitle: string;
   title: string;
-  handleFormSubmit: () => void;
+  operation: MutationFunction<{ signup: AuthResult }, MutationSignupArgs>;
+  error: ApolloError | undefined;
 }
 
-export default function AuthForm({ handleFormSubmit, error, setError, buttonTitle, title }: AuthFormProps) {
+export default function AuthForm({ buttonTitle, title, operation, error }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -32,6 +33,19 @@ export default function AuthForm({ handleFormSubmit, error, setError, buttonTitl
 
   const handlePasswordConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordRepeat(e.target.value);
+  };
+
+  const handleRegistration = () => {
+    operation({
+      variables: {
+        auth: {
+          email: email,
+          password: password,
+        },
+      },
+    })
+      .then(r => console.log(r.data))
+      .catch(err => console.log(err));
   };
 
   const {
@@ -105,66 +119,67 @@ export default function AuthForm({ handleFormSubmit, error, setError, buttonTitl
   );
 
   return (
-    <Container
-      component="main"
-      maxWidth="sm"
-      sx={{
-        position: 'absolute',
-        top: '45%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      <Box
+    <>
+      <Container
+        component="main"
+        maxWidth="sm"
         sx={{
-          marginTop: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          border: '2px solid',
-          borderColor: 'primary.main',
-          borderRadius: '10px',
-          padding: '20px',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
         }}
       >
-        <Typography component="h1" variant="h5" color={'black'} sx={{ padding: '10px 0' }}>
-          {title}
-        </Typography>
-        <TextField
-          {...register('email', {
-            required: 'Email is required',
-            pattern: {
-              value: /^\S+@\S+$/i,
-              message: 'Invalid email address',
-            },
-          })}
-          name="email"
-          error={!!errors?.email}
-          helperText={!!errors?.email && (errors?.email?.message as string)}
-          margin="normal"
-          fullWidth
-          id="email"
-          label="Email Address"
-          onChange={handleEmailChange}
-          value={email}
-        />
-        {renderPasswordField()}
-        {title === 'Registration' && renderPasswordConfirmField()}
-        <Button
-          onClick={handleSubmit(handleFormSubmit)}
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            border: '2px solid',
+            borderColor: 'primary.main',
+            borderRadius: '10px',
+            padding: '20px',
+          }}
         >
-          {buttonTitle}
-        </Button>
-      </Box>
-      <AuthSwitch
-        text={title === 'Sign in' ? "Don't have an account? Register!" : 'Already have an account? Sign In!'}
-        href={title === 'Sign in' ? '/register' : '/login'}
-      />
-      <ErrorBar error={error} setError={setError} />
-    </Container>
+          <Typography component="h1" variant="h5" color={'black'} sx={{ padding: '10px 0' }}>
+            {title}
+          </Typography>
+          <TextField
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Invalid email address',
+              },
+            })}
+            name="email"
+            error={!!errors?.email}
+            helperText={!!errors?.email && (errors?.email?.message as string)}
+            margin="normal"
+            fullWidth
+            id="email"
+            label="Email Address"
+            onChange={handleEmailChange}
+            value={email}
+          />
+          {renderPasswordField()}
+          {title === 'Registration' && renderPasswordConfirmField()}
+          <Button
+            onClick={handleSubmit(handleRegistration)}
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            {buttonTitle}
+          </Button>
+        </Box>
+        <AuthSwitch
+          text={title === 'Sign in' ? "Don't have an account? Register!" : 'Already have an account? Sign In!'}
+          href={title === 'Sign in' ? '/register' : '/login'}
+        />
+      </Container>
+      <ErrorBar error={error} />
+    </>
   );
 }

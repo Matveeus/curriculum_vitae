@@ -1,16 +1,34 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Snackbar } from '@mui/material';
+import { ApolloError } from '@apollo/client';
 
 interface ErrorBarProps {
-  error: string | null;
-  setError: (error: string | null) => void;
+  error: ApolloError | undefined;
 }
 
-export default function ErrorBar({ error, setError }: ErrorBarProps) {
+export default function ErrorBar({ error }: ErrorBarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(error !== undefined);
+
+    if (error !== undefined) {
+      const timeoutId = setTimeout(() => {
+        setIsOpen(false);
+      }, 6000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+    return undefined;
+  }, [error]);
+
   return (
-    <Snackbar open={error !== null} autoHideDuration={6000} onClose={() => setError(null)}>
+    <Snackbar open={isOpen} autoHideDuration={6000}>
       <Alert severity="error" sx={{ width: '100%' }}>
-        {error}
+        {error?.message}
       </Alert>
     </Snackbar>
   );
