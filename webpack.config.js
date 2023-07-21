@@ -3,17 +3,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = [
   {
-    entry: './src/client/index.tsx',
+    entry: './src/index.tsx',
     mode: 'development',
     target: 'web',
     output: {
-      path: path.resolve(__dirname, 'dist/client'),
+      path: path.resolve(__dirname, 'dist'),
       filename: 'client_bundle.js',
       publicPath: '/',
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './src/client/index.html',
+        template: './src/index.html',
       }),
     ],
     resolve: {

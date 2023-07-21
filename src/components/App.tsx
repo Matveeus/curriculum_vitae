@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import '../assets/styles/style.css';
-import Home from '../components/Home';
-import Login from '../components/auth/Login';
-import Register from '../components/auth/Register';
+import Home from '../pages/Home';
+import Login from '../pages/Login';
+import Register from '../pages/Register';
 
 export default function App() {
   return (
