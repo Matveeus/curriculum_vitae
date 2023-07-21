@@ -4,13 +4,17 @@ import App from './components/App';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './apollo/client';
+import { Provider as StoreProvider } from 'react-redux';
+import { store } from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <BrowserRouter>
     <React.StrictMode>
       <ApolloProvider client={client}>
-        <App />
+        <StoreProvider store={store}>
+          <App />
+        </StoreProvider>
       </ApolloProvider>
     </React.StrictMode>
   </BrowserRouter>,
