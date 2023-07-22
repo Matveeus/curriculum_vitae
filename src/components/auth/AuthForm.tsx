@@ -133,7 +133,6 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
 
   return (
     <Container
-      component="main"
       maxWidth="sm"
       sx={{
         position: 'absolute',
