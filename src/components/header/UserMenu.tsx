@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useTypedDispatch } from '../../hooks/useTypedDispatch';
+import { logOut } from '../../store/authSlice';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Avatar from '@mui/material/Avatar';
@@ -13,6 +15,7 @@ import Logout from '@mui/icons-material/Logout';
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const dispatch = useTypedDispatch();
 
   const openMenu = () => setIsOpen(true);
 
@@ -41,7 +44,7 @@ export default function UserMenu() {
 
         <Divider />
 
-        <MenuItem>
+        <MenuItem onClick={() => dispatch(logOut())}>
           <ListItemIcon>
             <Logout />
           </ListItemIcon>
