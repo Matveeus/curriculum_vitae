@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { Thunk } from '.';
 import type { User } from '../apollo/types';
 
 interface Auth {
@@ -8,6 +9,11 @@ interface Auth {
 
 const initialState: Auth = {
   currentUser: null,
+};
+
+const logOut = (): Thunk => dispatch => {
+  localStorage.removeItem('token');
+  dispatch(setCurrentUser(null));
 };
 
 const authSlice = createSlice({
@@ -21,4 +27,5 @@ const authSlice = createSlice({
 });
 
 export const { setCurrentUser } = authSlice.actions;
+export { logOut };
 export default authSlice.reducer;
