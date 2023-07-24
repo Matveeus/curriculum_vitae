@@ -6,11 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export function useAuthUser(email: string, password: string) {
   const navigate = useNavigate();
   const [registerUser, { loading }] = useMutation<{ signup: AuthResult }, MutationSignupArgs>(SIGN_UP);
-  const {
-    loading: loginLoading,
-    error: loginError,
-    data: loginData,
-  } = useQuery<{ login: AuthResult }, QueryLoginArgs>(LOGIN, {
+  const { error: loginError, data: loginData } = useQuery<{ login: AuthResult }, QueryLoginArgs>(LOGIN, {
     variables: {
       auth: {
         email: email,
@@ -38,7 +34,7 @@ export function useAuthUser(email: string, password: string) {
       if (token) {
         localStorage.setItem('token', token);
         navigate('/');
-        return { loading };
+        return { error: null };
       } else {
         return { error: 'Signup was successful, but no token received.' };
       }
@@ -57,7 +53,8 @@ export function useAuthUser(email: string, password: string) {
       if (token) {
         localStorage.setItem('token', token);
         navigate('/');
-        return { error: null, loading: loginLoading };
+        console.log(loading);
+        return { error: null };
       } else {
         return { error: 'Login failed: No token received.' };
       }
