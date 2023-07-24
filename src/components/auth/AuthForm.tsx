@@ -43,7 +43,6 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
       if (error) {
         setErr(error);
       } else {
-        console.log(loading);
         setLoading(loading);
       }
     } else {
@@ -51,7 +50,6 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
       if (error) {
         setErr(error);
       } else {
-        console.log(loading);
         setLoading(loading);
       }
     }

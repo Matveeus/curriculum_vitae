@@ -1,15 +1,13 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import useRequireAuth from '../hooks/useRequireAuth';
+import useRequireUser from '../hooks/useRequireUser';
 
 const Home = () => {
-  useRequireAuth();
+  useRequireUser();
   return (
-    <div>
-      <Typography variant="h4" sx={{ textAlign: 'center' }}>
-        Curriculum Vitae !
-      </Typography>
-    </div>
+    <Typography variant="h4" sx={{ textAlign: 'center' }}>
+      Curriculum Vitae !
+    </Typography>
   );
 };
 
