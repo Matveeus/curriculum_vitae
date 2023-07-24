@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { logOut } from '../../store/authSlice';
+import routes from '../../constants/routes';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Avatar from '@mui/material/Avatar';
@@ -11,8 +12,13 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/Logout';
+import type { User } from '../../apollo/types';
 
-export default function UserMenu() {
+interface UserMenuProps {
+  user: User;
+}
+
+export default function UserMenu({ user }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const dispatch = useTypedDispatch();
@@ -35,7 +41,7 @@ export default function UserMenu() {
         onClick={closeMenu}
         onClose={closeMenu}
       >
-        <MenuItem component={Link} to="/profile">
+        <MenuItem component={Link} to={routes.employee(user.id)}>
           <ListItemIcon>
             <AccountCircleIcon />
           </ListItemIcon>

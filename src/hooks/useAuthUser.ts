@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/client';
 import { SIGN_UP, LOGIN } from '../apollo/auth';
 import { AuthResult, MutationSignupArgs, QueryLoginArgs } from '../apollo/types';
+import routes from '../constants/routes';
 import { useNavigate } from 'react-router-dom';
 
 export function useAuthUser(email: string, password: string) {
@@ -37,7 +38,7 @@ export function useAuthUser(email: string, password: string) {
       const token = data?.signup?.access_token;
       if (token) {
         localStorage.setItem('token', token);
-        navigate('/');
+        navigate(routes.root());
         return { loading };
       } else {
         return { error: 'Signup was successful, but no token received.' };
@@ -56,7 +57,7 @@ export function useAuthUser(email: string, password: string) {
       const token = loginData?.login?.access_token;
       if (token) {
         localStorage.setItem('token', token);
-        navigate('/');
+        navigate(routes.root());
         return { error: null, loading: loginLoading };
       } else {
         return { error: 'Login failed: No token received.' };

@@ -17,7 +17,7 @@ export default function Header() {
           {user ? (
             <>
               <SideMenu />
-              <UserMenu />
+              <UserMenu user={user} />
             </>
           ) : (
             <AuthTabs />
