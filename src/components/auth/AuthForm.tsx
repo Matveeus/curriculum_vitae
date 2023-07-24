@@ -5,6 +5,8 @@ import AuthSwitch from './AuthSwitch';
 import ErrorBar from '../ErrorBar';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuthUser } from '../../hooks/useAuthUser';
+import { useTypedDispatch } from '../../hooks/useTypedDispatch';
+import { setCurrentUser } from '../../store/authSlice';
 import Loader from '../Loader';
 
 interface AuthFormProps {
@@ -13,6 +15,8 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
+  const dispatch = useTypedDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -39,6 +43,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
 
   useEffect(() => {
     localStorage.removeItem('token');
+    dispatch(setCurrentUser(null));
   }, [title]);
 
   const {
@@ -65,7 +70,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
     } catch (err) {
       setErr('An error occurred during form submission.');
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 
