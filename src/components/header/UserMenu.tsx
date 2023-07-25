@@ -11,20 +11,17 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/Logout';
-import { useNavigate } from 'react-router-dom';
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const dispatch = useTypedDispatch();
-  const navigate = useNavigate();
 
   const openMenu = () => setIsOpen(true);
 
   const closeMenu = () => setIsOpen(false);
 
   const handleLogOut = () => {
-    navigate('/login');
     dispatch(logOut());
   };
 

@@ -2,10 +2,13 @@ import { useQuery, useMutation } from '@apollo/client';
 import { SIGN_UP, LOGIN } from '../apollo/auth';
 import { AuthResult, MutationSignupArgs, QueryLoginArgs } from '../apollo/types';
 import { useNavigate } from 'react-router-dom';
+import { useTypedDispatch } from './useTypedDispatch';
+import { setCurrentUser } from '../store/authSlice';
 
 export function useAuthUser(email: string, password: string) {
   const navigate = useNavigate();
-  const [registerUser, { loading }] = useMutation<{ signup: AuthResult }, MutationSignupArgs>(SIGN_UP);
+  const dispatch = useTypedDispatch();
+  const [registerUser] = useMutation<{ signup: AuthResult }, MutationSignupArgs>(SIGN_UP);
   const { error: loginError, data: loginData } = useQuery<{ login: AuthResult }, QueryLoginArgs>(LOGIN, {
     variables: {
       auth: {
@@ -31,8 +34,11 @@ export function useAuthUser(email: string, password: string) {
       }
 
       const token = data?.signup?.access_token;
-      if (token) {
+      const user = data?.signup?.user;
+      if (token && user) {
+        dispatch(setCurrentUser(user));
         localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
         navigate('/');
         return { error: null };
       } else {
@@ -50,10 +56,12 @@ export function useAuthUser(email: string, password: string) {
       }
 
       const token = loginData?.login?.access_token;
-      if (token) {
+      const user = loginData?.login?.user;
+      if (token && user) {
+        dispatch(setCurrentUser(user));
         localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
         navigate('/');
-        console.log(loading);
         return { error: null };
       } else {
         return { error: 'Login failed: No token received.' };

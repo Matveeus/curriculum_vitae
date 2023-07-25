@@ -43,6 +43,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
 
   useEffect(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     dispatch(setCurrentUser(null));
   }, [title]);
 
@@ -50,11 +51,11 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: 'onBlur' });
+  } = useForm({ mode: 'onSubmit' });
 
   const onSubmit = async () => {
     setLoading(true);
-
+    console.log('error');
     try {
       if (title === 'Sign in') {
         const { error } = await handleLogin();
