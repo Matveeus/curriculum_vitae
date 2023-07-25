@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import routes from '../../constants/routes';
 import { Box, Button, Container, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import AuthSwitch from './AuthSwitch';
 import ErrorBar from '../ErrorBar';
@@ -182,7 +183,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
       </Box>
       <AuthSwitch
         text={title === 'Sign in' ? "Don't have an account? Register!" : 'Already have an account? Sign In!'}
-        href={title === 'Sign in' ? '/register' : '/login'}
+        href={title === 'Sign in' ? routes.register() : routes.login()}
       />
     </Container>
   );

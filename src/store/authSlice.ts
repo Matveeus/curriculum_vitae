@@ -4,7 +4,7 @@ import type { Thunk } from '.';
 import type { User } from '../apollo/types';
 
 interface Auth {
-  currentUser: Partial<User> | null;
+  currentUser: User | null;
 }
 
 const initialState: Auth = {
