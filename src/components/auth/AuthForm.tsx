@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Container, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import AuthSwitch from './AuthSwitch';
 import ErrorBar from '../ErrorBar';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuthUser } from '../../hooks/useAuthUser';
-import { useTypedDispatch } from '../../hooks/useTypedDispatch';
-import { setCurrentUser } from '../../store/authSlice';
 import Loader from '../Loader';
 
 interface AuthFormProps {
@@ -15,8 +13,6 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
-  const dispatch = useTypedDispatch();
-
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -27,7 +23,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { handleRegistration, handleLogin } = useAuthUser(email, password);
+  const { handleRegistration, handleLogin } = useAuthUser();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -41,12 +37,6 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
     setPasswordRepeat(e.target.value);
   };
 
-  useEffect(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    dispatch(setCurrentUser(null));
-  }, [title]);
-
   const {
     register,
     handleSubmit,
@@ -55,21 +45,20 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
 
   const onSubmit = async () => {
     setLoading(true);
-    console.log('error');
     try {
       if (title === 'Sign in') {
-        const { error } = await handleLogin();
+        const { error } = await handleLogin(email, password);
         if (error) {
           setErr(error);
         }
       } else {
-        const { error } = await handleRegistration();
+        const { error } = await handleRegistration(email, password);
         if (error) {
           setErr(error);
         }
       }
     } catch (err) {
-      setErr('An error occurred during form submission.');
+      setErr(err.message);
     } finally {
       setLoading(false);
     }

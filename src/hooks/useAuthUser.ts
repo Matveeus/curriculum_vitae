@@ -1,24 +1,23 @@
-import { useQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { SIGN_UP, LOGIN } from '../apollo/auth';
-import { AuthResult, MutationSignupArgs, QueryLoginArgs } from '../apollo/types';
+import { AuthResult, MutationSignupArgs, QueryLoginArgs, User } from '../apollo/types';
 import { useNavigate } from 'react-router-dom';
 import { useTypedDispatch } from './useTypedDispatch';
 import { setCurrentUser } from '../store/authSlice';
 
-export function useAuthUser(email: string, password: string) {
+export function useAuthUser() {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
   const [registerUser] = useMutation<{ signup: AuthResult }, MutationSignupArgs>(SIGN_UP);
-  const { error: loginError, data: loginData } = useQuery<{ login: AuthResult }, QueryLoginArgs>(LOGIN, {
-    variables: {
-      auth: {
-        email: email,
-        password: password,
-      },
-    },
-  });
+  const [loginUser] = useLazyQuery<{ login: AuthResult }, QueryLoginArgs>(LOGIN);
 
-  const handleRegistration = async () => {
+  const saveTokenAndUser = (token: string, user: User) => {
+    dispatch(setCurrentUser(user));
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+  };
+
+  const handleRegistration = async (email: string, password: string) => {
     try {
       const { data, errors } = await registerUser({
         variables: {
@@ -36,9 +35,7 @@ export function useAuthUser(email: string, password: string) {
       const token = data?.signup?.access_token;
       const user = data?.signup?.user;
       if (token && user) {
-        dispatch(setCurrentUser(user));
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        saveTokenAndUser(token, user);
         navigate('/');
         return { error: null };
       } else {
@@ -49,25 +46,32 @@ export function useAuthUser(email: string, password: string) {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (email: string, password: string) => {
     try {
-      if (loginError) {
-        return { data: null, error: loginError.message };
+      const { data, error } = await loginUser({
+        variables: {
+          auth: {
+            email: email,
+            password: password,
+          },
+        },
+      });
+
+      if (error) {
+        return { data: null, error: error.message };
       }
 
-      const token = loginData?.login?.access_token;
-      const user = loginData?.login?.user;
+      const token = data?.login?.access_token;
+      const user = data?.login?.user;
       if (token && user) {
-        dispatch(setCurrentUser(user));
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        saveTokenAndUser(token, user);
         navigate('/');
         return { error: null };
       } else {
-        return { error: 'Login failed: No token received.' };
+        return { error: 'Login was successful, but no token received.' };
       }
     } catch (err) {
-      return { data: null, error: 'Error during login.' };
+      return { data: null, error: 'An error occurred during login.' };
     }
   };
 
