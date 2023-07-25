@@ -1,6 +1,7 @@
 # dependencies
 /node_modules
 /.pnp
+/.husky
 .pnp.js
 
 # testing
@@ -8,6 +9,7 @@
 
 # production
 /build
+/dist
 
 # idea
 /.idea

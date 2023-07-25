@@ -1,0 +1,7 @@
+schema: src/apollo/schema.graphql
+generates:
+  src/apollo/types.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
