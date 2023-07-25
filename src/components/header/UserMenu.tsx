@@ -27,6 +27,10 @@ export default function UserMenu({ user }: UserMenuProps) {
 
   const closeMenu = () => setIsOpen(false);
 
+  const handleLogOut = () => {
+    dispatch(logOut());
+  };
+
   return (
     <>
       <IconButton sx={{ ml: 'auto' }} ref={buttonRef} onClick={openMenu}>
@@ -50,7 +54,7 @@ export default function UserMenu({ user }: UserMenuProps) {
 
         <Divider />
 
-        <MenuItem onClick={() => dispatch(logOut())}>
+        <MenuItem onClick={handleLogOut}>
           <ListItemIcon>
             <Logout />
           </ListItemIcon>

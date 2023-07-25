@@ -8,11 +8,12 @@ interface Auth {
 }
 
 const initialState: Auth = {
-  currentUser: null,
+  currentUser: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
 };
 
 const logOut = (): Thunk => dispatch => {
   localStorage.removeItem('token');
+  localStorage.removeItem('user');
   dispatch(setCurrentUser(null));
 };
 
