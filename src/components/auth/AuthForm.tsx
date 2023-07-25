@@ -6,6 +6,7 @@ import ErrorBar from '../ErrorBar';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import Loader from '../Loader';
+import routes from '../../constants/routes';
 
 interface AuthFormProps {
   buttonTitle: string;
@@ -184,7 +185,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
         </Box>
         <AuthSwitch
           text={title === 'Sign in' ? "Don't have an account? Register!" : 'Already have an account? Sign In!'}
-          href={title === 'Sign in' ? '/register' : '/login'}
+          href={title === 'Sign in' ? routes.register() : routes.login()}
         />
       </Container>
     </form>
