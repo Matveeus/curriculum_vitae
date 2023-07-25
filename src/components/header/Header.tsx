@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import AuthTabs from './AuthTabs';
 import SideMenu from './SideMenu';
 import UserMenu from './UserMenu';
+import Typography from '@mui/material/Typography';
 
 export default function Header() {
   const user = useTypedSelector(state => state.auth.currentUser);
@@ -17,6 +18,7 @@ export default function Header() {
           {user ? (
             <>
               <SideMenu />
+              <Typography sx={{ mr: '10px', ml: 'auto' }}>{user?.profile?.full_name || user?.email}</Typography>
               <UserMenu user={user} />
             </>
           ) : (
