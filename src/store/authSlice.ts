@@ -13,6 +13,7 @@ const initialState: Auth = {
 
 const logOut = (): Thunk => dispatch => {
   localStorage.removeItem('token');
+  localStorage.removeItem('user');
   dispatch(setCurrentUser(null));
 };
 
