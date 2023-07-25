@@ -33,8 +33,8 @@ export default function UserMenu({ user }: UserMenuProps) {
 
   return (
     <>
-      <IconButton sx={{ ml: 'auto' }} ref={buttonRef} onClick={openMenu}>
-        <Avatar sx={{ bgcolor: 'primary.main' }}>A</Avatar>
+      <IconButton ref={buttonRef} onClick={openMenu}>
+        <Avatar sx={{ bgcolor: 'primary.main' }}>{user?.profile?.avatar || user?.email.charAt(0)}</Avatar>
       </IconButton>
       <Menu
         MenuListProps={{ sx: { minWidth: 200 } }}
