@@ -1,6 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { SIGN_UP, LOGIN } from '../apollo/auth';
 import { AuthResult, MutationSignupArgs, QueryLoginArgs, User } from '../apollo/types';
+import routes from '../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedDispatch } from './useTypedDispatch';
 import { setCurrentUser } from '../store/authSlice';
@@ -36,7 +37,7 @@ export function useAuthUser() {
       const user = data?.signup?.user;
       if (token && user) {
         saveTokenAndUser(token, user);
-        navigate('/');
+        navigate(routes.employees());
         return { error: null };
       } else {
         return { error: 'Signup was successful, but no token received.' };
@@ -60,12 +61,11 @@ export function useAuthUser() {
       if (error) {
         return { data: null, error: error.message };
       }
-
       const token = data?.login?.access_token;
       const user = data?.login?.user;
       if (token && user) {
         saveTokenAndUser(token, user);
-        navigate('/');
+        navigate(routes.employees());
         return { error: null };
       } else {
         return { error: 'Login was successful, but no token received.' };
