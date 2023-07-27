@@ -27,12 +27,16 @@ interface InitialTableProps<RowType extends { id: string }> {
 export function InitialTable<RowType extends { id: string }>({ columns, rows, menuItems }: InitialTableProps<RowType>) {
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer>
+      <TableContainer sx={{ maxHeight: '80vh' }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow key="header-row">
               {columns.map(column => (
-                <TableCell key={column.id} style={{ minWidth: column.minWidth }} align={column.align || 'center'}>
+                <TableCell
+                  key={column.id}
+                  style={{ minWidth: column.minWidth, fontWeight: 600 }}
+                  align={column.align || 'center'}
+                >
                   {column.label}
                 </TableCell>
               ))}
