@@ -65,5 +65,5 @@ export function EmployeesTable() {
     { text: 'Delete user', onClick: (rowId: string) => handleMenuItemClick('Delete user', rowId), disabled: true },
   ];
 
-  return <InitialTable<Data> columns={columns} rows={rows} menuItems={menuItems} />;
+  return <InitialTable columns={columns} rows={rows} menuItems={menuItems} />;
 }

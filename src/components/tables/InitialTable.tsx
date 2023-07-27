@@ -18,13 +18,17 @@ export interface Column {
   format?: (value: number) => string;
 }
 
-interface InitialTableProps<RowType extends { id: string }> {
+interface Row {
+  id: string;
+}
+
+interface InitialTableProps {
   columns: Column[];
-  rows: RowType[];
+  rows: Row[];
   menuItems: MenuItemData[];
 }
 
-export function InitialTable<RowType extends { id: string }>({ columns, rows, menuItems }: InitialTableProps<RowType>) {
+export function InitialTable({ columns, rows, menuItems }: InitialTableProps) {
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer>
@@ -46,13 +50,13 @@ export function InitialTable<RowType extends { id: string }>({ columns, rows, me
                     return (
                       <TableCell key={column.id} align={column.align || 'center'}>
                         {column.id === 'avatar' ? (
-                          <Avatar src={row[column.id as keyof RowType]} alt="avatar">
-                            {row[column.id as keyof RowType]}
+                          <Avatar src={row[column.id as keyof Row]} alt="avatar">
+                            {row[column.id as keyof Row]}
                           </Avatar>
                         ) : column.id === 'menu' ? (
                           <MoreMenu menuItems={menuItems} rowId={row.id} />
                         ) : (
-                          row[column.id as keyof RowType]
+                          row[column.id as keyof Row]
                         )}
                       </TableCell>
                     );
