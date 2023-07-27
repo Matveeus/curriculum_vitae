@@ -7,8 +7,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Avatar } from '@mui/material';
+import { MoreMenu } from '../MoreMenu';
+import { MenuItemData } from '../MoreMenu';
 
-interface Column {
+export interface Column {
   id: string;
   label: string;
   minWidth?: number;
@@ -19,9 +21,10 @@ interface Column {
 interface InitialTableProps<RowType extends { id: string }> {
   columns: Column[];
   rows: RowType[];
+  menuItems: MenuItemData[];
 }
 
-function InitialTable<RowType extends { id: string }>({ columns, rows }: InitialTableProps<RowType>) {
+export function InitialTable<RowType extends { id: string }>({ columns, rows, menuItems }: InitialTableProps<RowType>) {
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer>
@@ -40,13 +43,14 @@ function InitialTable<RowType extends { id: string }>({ columns, rows }: Initial
               return (
                 <TableRow tabIndex={-1} key={row.id}>
                   {columns.map(column => {
-                    console.log(row[column.id as keyof RowType]);
                     return (
                       <TableCell key={column.id} align={column.align || 'center'}>
                         {column.id === 'avatar' ? (
-                          <Avatar src={row[column.id as keyof RowType]} alt={`avatar`}>
+                          <Avatar src={row[column.id as keyof RowType]} alt="avatar">
                             {row[column.id as keyof RowType]}
                           </Avatar>
+                        ) : column.id === 'menu' ? (
+                          <MoreMenu menuItems={menuItems} rowId={row.id} />
                         ) : (
                           row[column.id as keyof RowType]
                         )}
@@ -62,5 +66,3 @@ function InitialTable<RowType extends { id: string }>({ columns, rows }: Initial
     </Paper>
   );
 }
-
-export default InitialTable;
