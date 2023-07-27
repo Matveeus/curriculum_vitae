@@ -8,7 +8,7 @@ export default function App() {
   return (
     <>
       <Header />
-      <Box component="main">
+      <Box sx={{ py: 3 }} component="main">
         <Container maxWidth="xl">
           <Outlet />
         </Container>
