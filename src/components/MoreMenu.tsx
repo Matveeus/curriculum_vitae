@@ -3,30 +3,27 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useTypedSelector } from '../hooks/useTypedSelector';
 
 export interface MenuItemData {
   text: string;
-  onClick?: (id: string) => void;
-  disabled?: boolean;
+  onClick?: () => void;
+  disabled: boolean;
 }
 
 interface MoreMenuProps {
   menuItems: MenuItemData[];
-  rowId: string;
 }
 
-export function MoreMenu({ menuItems, rowId }: MoreMenuProps) {
-  const user = useTypedSelector(state => state.auth.currentUser);
+export function MoreMenu({ menuItems }: MoreMenuProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const openMenu = () => setIsOpen(true);
   const closeMenu = () => setIsOpen(false);
 
-  const handleMenuItemClick = (onClick?: (id: string) => void) => {
+  const handleMenuItemClick = (onClick?: () => void) => {
     closeMenu();
-    if (onClick) onClick(rowId);
+    if (onClick) onClick();
   };
 
   return (
@@ -43,11 +40,7 @@ export function MoreMenu({ menuItems, rowId }: MoreMenuProps) {
         onClose={closeMenu}
       >
         {menuItems.map(item => (
-          <MenuItem
-            key={item.text}
-            onClick={() => handleMenuItemClick(item.onClick)}
-            disabled={item.disabled || (false && user?.role !== 'admin')}
-          >
+          <MenuItem key={item.text} onClick={() => handleMenuItemClick(item.onClick)} disabled={item.disabled}>
             {item.text}
           </MenuItem>
         ))}

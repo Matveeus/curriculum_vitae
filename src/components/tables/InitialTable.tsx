@@ -7,8 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Avatar } from '@mui/material';
-import { MoreMenu } from '../MoreMenu';
-import { MenuItemData } from '../MoreMenu';
+import { MenuItemData, MoreMenu } from '../MoreMenu';
 
 export interface Column {
   id: string;
@@ -25,10 +24,9 @@ interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
-  menuItems: MenuItemData[];
 }
 
-export function InitialTable({ columns, rows, menuItems }: InitialTableProps) {
+export function InitialTable({ columns, rows }: InitialTableProps) {
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: '80vh' }}>
@@ -36,11 +34,7 @@ export function InitialTable({ columns, rows, menuItems }: InitialTableProps) {
           <TableHead>
             <TableRow key="header-row">
               {columns.map(column => (
-                <TableCell
-                  key={column.id}
-                  style={{ minWidth: column.minWidth, fontWeight: 600 }}
-                  align={column.align || 'center'}
-                >
+                <TableCell key={column.id} style={{ minWidth: column.minWidth }} align={column.align || 'center'}>
                   {column.label}
                 </TableCell>
               ))}
@@ -51,16 +45,21 @@ export function InitialTable({ columns, rows, menuItems }: InitialTableProps) {
               return (
                 <TableRow tabIndex={-1} key={row.id}>
                   {columns.map(column => {
+                    const cellValue = row[column.id as keyof Row];
                     return (
                       <TableCell key={column.id} align={column.align || 'center'}>
                         {column.id === 'avatar' ? (
-                          <Avatar src={row[column.id as keyof Row]} alt="avatar">
-                            {row[column.id as keyof Row]}
+                          <Avatar src={cellValue} alt="avatar">
+                            {cellValue}
                           </Avatar>
-                        ) : column.id === 'menu' ? (
-                          <MoreMenu menuItems={menuItems} rowId={row.id} />
+                        ) : column.id === 'menuItems' ? (
+                          Array.isArray(cellValue) ? (
+                            <MoreMenu menuItems={cellValue as MenuItemData[]} />
+                          ) : (
+                            cellValue
+                          )
                         ) : (
-                          row[column.id as keyof Row]
+                          cellValue
                         )}
                       </TableCell>
                     );

@@ -7,6 +7,7 @@ import { User } from '../../apollo/types';
 import Loader from '../Loader';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 interface Data {
   id: string;
@@ -16,10 +17,12 @@ interface Data {
   email: string;
   department: string;
   position: string;
+  menuItems?: MenuItemData[];
 }
 
 export function EmployeesTable() {
   const navigate = useNavigate();
+  const currentUser = useTypedSelector(state => state.auth.currentUser);
   const { loading, error, data } = useQuery<{ users: User[] }>(GET_USERS_DATA);
 
   if (loading) return <Loader />;
@@ -34,7 +37,7 @@ export function EmployeesTable() {
     { id: 'email', label: 'Email', align: 'center' },
     { id: 'department', label: 'Department', align: 'center' },
     { id: 'position', label: 'Position', align: 'center' },
-    { id: 'menu', label: '', align: 'center' },
+    { id: 'menuItems', label: '', align: 'center' },
   ];
 
   const rows: Data[] = users.map(user => ({
@@ -45,25 +48,19 @@ export function EmployeesTable() {
     email: user.email ?? '',
     department: user.department_name ?? '',
     position: user.position_name ?? '',
+    menuItems: [
+      {
+        text: 'Profile',
+        onClick: () => navigate(routes.employee(user.id)),
+        disabled: false,
+      },
+      {
+        text: 'Delete user',
+        onClick: () => console.log('deleted'),
+        disabled: currentUser?.role !== 'admin',
+      },
+    ],
   }));
 
-  const handleMenuItemClick = (item: string, rowId: string) => {
-    switch (item) {
-      case 'Profile':
-        navigate(routes.employee(rowId));
-        break;
-      case 'Delete user':
-        console.log('deleted');
-        break;
-      default:
-        break;
-    }
-  };
-
-  const menuItems: MenuItemData[] = [
-    { text: 'Profile', onClick: (rowId: string) => handleMenuItemClick('Profile', rowId), disabled: false },
-    { text: 'Delete user', onClick: (rowId: string) => handleMenuItemClick('Delete user', rowId), disabled: true },
-  ];
-
-  return <InitialTable columns={columns} rows={rows} menuItems={menuItems} />;
+  return <InitialTable columns={columns} rows={rows} />;
 }
