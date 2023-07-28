@@ -6,6 +6,7 @@ import Home from './Home';
 import Login from './Login';
 import Register from './Register';
 import Private from './Private';
+import Employees from './Employees';
 
 export function Router() {
   return (
@@ -15,7 +16,9 @@ export function Router() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route element={<Private />}></Route>
+          <Route element={<Private />}>
+            <Route path="/employees" element={<Employees />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
