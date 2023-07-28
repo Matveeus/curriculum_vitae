@@ -1,12 +1,7 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Navigate } from 'react-router-dom';
+import routes from '../constants/routes';
 
-const Home = () => {
-  return (
-    <Typography variant="h4" sx={{ textAlign: 'center' }}>
-      Curriculum Vitae !
-    </Typography>
-  );
-};
-
-export default Home;
+export default function Home() {
+  return <Navigate to={routes.login()} />;
+}

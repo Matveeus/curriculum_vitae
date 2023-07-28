@@ -48,11 +48,13 @@ export default function BreadcrumbsNav({ paths }: BreadcrumbsNavProps) {
         const linkInner = icon ? [icon, text] : text;
 
         return route ? (
-          <NavLink route={route} color={isPenult ? 'primary' : 'inherit'}>
+          <NavLink route={route} color={isPenult ? 'primary' : 'inherit'} key={index}>
             {linkInner}
           </NavLink>
         ) : (
-          <Typography>{linkInner}</Typography>
+          <Typography color="text.primary" key={index}>
+            {linkInner}
+          </Typography>
         );
       })}
     </Breadcrumbs>
