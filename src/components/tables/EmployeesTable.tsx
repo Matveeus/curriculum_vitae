@@ -8,6 +8,7 @@ import Loader from '../Loader';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { getUserNameAbbreviation } from '../../utils';
 
 interface Data {
   id: string;
@@ -42,7 +43,7 @@ export function EmployeesTable() {
 
   const rows: Data[] = users.map(user => ({
     id: user.id ?? '',
-    avatar: user.profile.avatar ? user.profile.avatar : user.profile.first_name?.charAt(0) ?? user.email.charAt(0),
+    avatar: user.profile.avatar || getUserNameAbbreviation(user),
     firstName: user.profile.first_name ?? '',
     lastName: user.profile.last_name ?? '',
     email: user.email ?? '',

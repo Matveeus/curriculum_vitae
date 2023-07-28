@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { logOut } from '../../store/authSlice';
+import { getUserNameAbbreviation } from '../../utils';
 import routes from '../../constants/routes';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -34,7 +35,15 @@ export default function UserMenu({ user }: UserMenuProps) {
   return (
     <>
       <IconButton ref={buttonRef} onClick={openMenu}>
-        <Avatar sx={{ bgcolor: 'primary.main' }}>{user?.profile?.avatar || user?.email.charAt(0)}</Avatar>
+        <Avatar
+          sx={{
+            bgcolor: 'primary.main',
+          }}
+          src={user.profile.avatar!}
+          alt={user.profile.full_name || user.email}
+        >
+          {getUserNameAbbreviation(user)}
+        </Avatar>
       </IconButton>
       <Menu
         MenuListProps={{ sx: { minWidth: 200 } }}
