@@ -34,7 +34,9 @@ export default function UserMenu({ user }: UserMenuProps) {
   return (
     <>
       <IconButton ref={buttonRef} onClick={openMenu}>
-        <Avatar sx={{ bgcolor: 'primary.main' }}>{user?.profile?.avatar || user?.email.charAt(0)}</Avatar>
+        <Avatar src={user?.profile?.avatar || ''} sx={{ bgcolor: 'primary.main' }}>
+          {user.profile.full_name ? user.profile.full_name?.charAt(0) : user.email.charAt(0)}
+        </Avatar>
       </IconButton>
       <Menu
         MenuListProps={{ sx: { minWidth: 200 } }}
