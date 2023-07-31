@@ -1,8 +1,10 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
+console.log(process.env.API_URI);
+
 const httpLink = createHttpLink({
-  uri: 'https://cv-project-js.inno.ws/api/graphql',
+  uri: process.env.API_URI || '',
 });
 
 const authLink = setContext((_, { headers }) => {
