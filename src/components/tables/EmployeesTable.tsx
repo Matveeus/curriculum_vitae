@@ -33,8 +33,8 @@ export function EmployeesTable() {
 
   const columns: Column[] = [
     { id: 'avatar', label: '', align: 'center' },
-    { id: 'firstName', label: 'First Name', align: 'center' },
-    { id: 'lastName', label: 'Last Name', align: 'center' },
+    { id: 'firstName', label: 'First Name', align: 'center', searchable: true },
+    { id: 'lastName', label: 'Last Name', align: 'center', searchable: true },
     { id: 'email', label: 'Email', align: 'center' },
     { id: 'department', label: 'Department', align: 'center' },
     { id: 'position', label: 'Position', align: 'center' },
