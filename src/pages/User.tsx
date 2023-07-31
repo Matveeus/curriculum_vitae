@@ -1,19 +1,32 @@
 import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 import last from 'lodash/last';
 import capitalize from 'lodash/capitalize';
+import { useQuery } from '@apollo/client';
+import { GET_USER_DATA } from '../apollo/employeesData';
+import { GET_SELECT_LISTS } from '../apollo/selectLists';
 import routes from '../constants/routes';
-import { useTypedSelector } from '../hooks/useTypedSelector';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import BreadcrumbsNav from '../components/BreadcrumbsNav';
 import LinkTab from '../components/LinkTab';
+import Loader from '../components/Loader';
 
-export default function Profile() {
-  const user = useTypedSelector(state => state.auth.currentUser!);
+export default function User() {
+  const { id } = useParams();
+  const userQuery = useQuery(GET_USER_DATA, { variables: { id } });
+  const listsQuery = useQuery(GET_SELECT_LISTS);
   const { pathname } = useLocation();
 
+  const loading = userQuery.loading || listsQuery.loading;
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  const { user } = userQuery.data;
+  const { departments, positions } = listsQuery.data;
   const currentTab = last(pathname.split('/'));
 
   return (
@@ -38,14 +51,14 @@ export default function Profile() {
       </Box>
 
       <Box sx={{ px: 4 }}>
-        <Tabs sx={{ color: 'text.primary' }} value={currentTab}>
+        <Tabs sx={{ mb: 8, color: 'text.primary' }} value={currentTab}>
           <LinkTab route={routes.employee(user.id)} label="Profile" value="profile" />
           <LinkTab route={routes.employeeSkills(user.id)} label="Skills" value="skills" />
           <LinkTab route={routes.employeeLanguages(user.id)} label="Languages" value="languages" />
           <LinkTab route={routes.employeeCv(user.id)} label="CVs" value="cvs" />
         </Tabs>
 
-        <Outlet />
+        <Outlet context={{ user, departments, positions }} />
       </Box>
     </>
   );

@@ -1,22 +1,61 @@
 import { gql } from '@apollo/client';
 
+const USER_DATA = gql`
+  fragment UserData on User {
+    id
+    created_at
+    email
+    department_name
+    position_name
+    role
+  }
+`;
+
+const PROFILE_DATA = gql`
+  fragment ProfileData on Profile {
+    id
+    first_name
+    last_name
+    full_name
+    avatar
+  }
+`;
+
 export const GET_USERS_DATA = gql`
+  ${USER_DATA}
+  ${PROFILE_DATA}
   query GetAllUsers {
     users {
-      id
-      created_at
-      email
+      ...UserData
       is_verified
       profile {
-        id
-        first_name
-        last_name
-        full_name
-        avatar
+        ...ProfileData
       }
-      department_name
-      position_name
-      role
+    }
+  }
+`;
+
+export const GET_USER_DATA = gql`
+  ${USER_DATA}
+  ${PROFILE_DATA}
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      ...UserData
+      profile {
+        ...ProfileData
+        skills {
+          skill_name
+          mastery
+        }
+        languages {
+          language_name
+          proficiency
+        }
+      }
+      cvs {
+        id
+        name
+      }
     }
   }
 `;

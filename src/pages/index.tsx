@@ -8,6 +8,7 @@ import Register from './Register';
 import Private from './Private';
 import Employees from './Employees';
 import User from './User';
+import UserProfile from './UserProfile';
 
 export function Router() {
   return (
@@ -20,7 +21,7 @@ export function Router() {
           <Route element={<Private />}>
             <Route path="employees" element={<Employees />} />
             <Route path="employees/:id" element={<User />}>
-              <Route path="profile" element={<p>Profile</p>} />
+              <Route path="profile" element={<UserProfile />} />
               <Route path="skills" element={<p>Skills</p>} />
               <Route path="languages" element={<p>Languages</p>} />
               <Route path="cvs" element={<p>CVs</p>} />
