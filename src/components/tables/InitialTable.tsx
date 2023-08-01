@@ -6,10 +6,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Avatar } from '@mui/material';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import { sortRows, filterRows } from '../../utils/tableUtils';
+import Avatar from '@mui/material/Avatar';
 import { Search, MoreMenu } from '../';
+import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
 
 export interface Column {
