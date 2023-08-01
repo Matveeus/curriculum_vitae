@@ -21,10 +21,10 @@ const PROFILE_DATA = gql`
   }
 `;
 
-export const GET_USERS_DATA = gql`
+export const GET_USERS = gql`
   ${USER_DATA}
   ${PROFILE_DATA}
-  query GetAllUsers {
+  query GetUsers {
     users {
       ...UserData
       is_verified
@@ -35,7 +35,7 @@ export const GET_USERS_DATA = gql`
   }
 `;
 
-export const GET_USER_DATA = gql`
+export const GET_USER = gql`
   ${USER_DATA}
   ${PROFILE_DATA}
   query GetUser($id: ID!) {

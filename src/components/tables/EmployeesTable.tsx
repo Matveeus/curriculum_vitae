@@ -1,5 +1,5 @@
 import React from 'react';
-import { GET_USERS_DATA } from '../../apollo/employeesData';
+import { GET_USERS } from '../../apollo/operations';
 import { useQuery } from '@apollo/client';
 import { InitialTable, Column } from './InitialTable';
 import { MenuItemData } from '../MoreMenu';
@@ -24,7 +24,7 @@ interface Data {
 export function EmployeesTable() {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const { loading, error, data } = useQuery<{ users: User[] }>(GET_USERS_DATA);
+  const { loading, error, data } = useQuery<{ users: User[] }>(GET_USERS);
 
   if (loading) return <Loader />;
   if (error) return <p>Error: {error.message}</p>;

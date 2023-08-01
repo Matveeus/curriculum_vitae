@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const USER_FRAGMENT = gql`
+const USER_FRAGMENT = gql`
   fragment UserFragment on User {
     id
     email
@@ -26,7 +26,7 @@ export const SIGN_UP = gql`
   }
 `;
 
-export const LOGIN = gql`
+export const LOG_IN = gql`
   ${USER_FRAGMENT}
   query LogInQuery($auth: AuthInput!) {
     login(auth: $auth) {
