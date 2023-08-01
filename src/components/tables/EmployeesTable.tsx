@@ -1,14 +1,15 @@
 import React from 'react';
 import { GET_USERS } from '../../apollo/operations';
 import { useQuery } from '@apollo/client';
-import { InitialTable, Column } from './InitialTable';
-import { MenuItemData } from '../MoreMenu';
-import { User } from '../../apollo/types';
-import Loader from '../Loader';
+import InitialTable from './InitialTable';
+import { Loader } from '../';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { getUserNameAbbreviation } from '../../utils';
+import type { User } from '../../apollo/types';
+import type { MenuItemData } from '../MoreMenu';
+import type { Column } from './InitialTable';
 
 interface Data {
   id: string;
@@ -21,7 +22,7 @@ interface Data {
   menuItems?: MenuItemData[];
 }
 
-export function EmployeesTable() {
+export default function EmployeesTable() {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const { loading, error, data } = useQuery<{ users: User[] }>(GET_USERS);
