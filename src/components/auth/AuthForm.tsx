@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Container, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AuthSwitch from './AuthSwitch';
 import { Loader, ErrorBar } from '../';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import routes from '../../constants/routes';
 

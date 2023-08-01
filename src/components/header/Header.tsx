@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
+import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import AuthTabs from './AuthTabs';
 import SideMenu from './SideMenu';
 import UserMenu from './UserMenu';
-import Typography from '@mui/material/Typography';
 
 export default function Header() {
   const user = useTypedSelector(state => state.auth.currentUser);

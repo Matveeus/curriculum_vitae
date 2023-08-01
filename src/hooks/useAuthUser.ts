@@ -1,10 +1,10 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { SIGN_UP, LOG_IN } from '../apollo/operations';
-import { AuthResult, MutationSignupArgs, QueryLoginArgs, User } from '../apollo/types';
 import routes from '../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedDispatch } from './useTypedDispatch';
 import { setCurrentUser } from '../store/authSlice';
+import type { AuthResult, MutationSignupArgs, QueryLoginArgs, User } from '../apollo/types';
 
 export function useAuthUser() {
   const navigate = useNavigate();

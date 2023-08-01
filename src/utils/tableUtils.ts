@@ -1,4 +1,4 @@
-import { Column, Row, Order } from '../components/tables/InitialTable';
+import type { Column, Row, Order } from '../components/tables/InitialTable';
 
 export function sortRows(rows: Row[], orderBy: string, order: Order, columns: Column[]): Row[] {
   if (orderBy && order) {
