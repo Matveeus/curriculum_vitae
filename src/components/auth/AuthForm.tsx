@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Container, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import AuthSwitch from './AuthSwitch';
-import ErrorBar from '../ErrorBar';
+import { Loader, ErrorBar } from '../';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuthUser } from '../../hooks/useAuthUser';
-import Loader from '../Loader';
 import routes from '../../constants/routes';
 
 interface AuthFormProps {

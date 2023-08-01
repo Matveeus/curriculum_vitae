@@ -9,9 +9,7 @@ import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import BreadcrumbsNav from '../components/BreadcrumbsNav';
-import LinkTab from '../components/LinkTab';
-import Loader from '../components/Loader';
+import { Loader, LinkTab, BreadcrumbsNav } from '../components';
 
 export default function User() {
   const { id } = useParams();
