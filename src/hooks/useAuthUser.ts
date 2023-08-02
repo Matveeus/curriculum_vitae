@@ -30,7 +30,7 @@ export function useAuthUser() {
       });
 
       if (errors) {
-        return { data: null, error: errors[0].message };
+        return { error: errors[0].message };
       }
 
       const token = data?.signup?.access_token;
@@ -43,7 +43,11 @@ export function useAuthUser() {
         return { error: 'Signup was successful, but no token received.' };
       }
     } catch (err) {
-      return { data: null, error: 'Such user already exists' };
+      if (err.message === 'duplicate key value violates unique constraint "UQ_e12875dfb3b1d92d7d7c5377e22"') {
+        return { error: 'Such user already exists' };
+      } else {
+        return { error: err.message };
+      }
     }
   };
 
@@ -59,7 +63,7 @@ export function useAuthUser() {
       });
 
       if (error) {
-        return { data: null, error: error.message };
+        return { error: error.message };
       }
       const token = data?.login?.access_token;
       const user = data?.login?.user;
@@ -71,7 +75,7 @@ export function useAuthUser() {
         return { error: 'Login was successful, but no token received.' };
       }
     } catch (err) {
-      return { data: null, error: 'An error occurred during login.' };
+      return { error: err.message };
     }
   };
 
