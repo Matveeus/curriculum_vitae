@@ -11,7 +11,6 @@ import Avatar from '@mui/material/Avatar';
 import { Search, MoreMenu } from '../';
 import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
-import ErrorBar from '../ErrorBar';
 
 export interface Column {
   id: string;
@@ -29,12 +28,11 @@ export interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
-  error?: string;
 }
 
 export type Order = 'asc' | 'desc';
 
-export default function InitialTable({ columns, rows, error }: InitialTableProps) {
+export default function InitialTable({ columns, rows }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('');
   const [searchInput, setSearchInput] = React.useState('');
@@ -118,7 +116,6 @@ export default function InitialTable({ columns, rows, error }: InitialTableProps
           </Table>
         </TableContainer>
       </Paper>
-      <ErrorBar error={error || ''} />
     </>
   );
 }
