@@ -67,7 +67,7 @@ export default function EmployeesTable() {
   return (
     <>
       <InitialTable columns={columns} rows={rows} />
-      <ErrorBar error={error?.message || ''} />
+      {error ? <ErrorBar error={error.message || ''} /> : null}
     </>
   );
 }

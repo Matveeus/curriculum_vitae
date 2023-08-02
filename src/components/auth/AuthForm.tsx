@@ -194,7 +194,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
           />
         </Container>
       </form>
-      <ErrorBar error={err} />
+      {err ? <ErrorBar error={err} /> : null}
     </>
   );
 }
