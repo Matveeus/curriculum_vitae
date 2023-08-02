@@ -1,5 +1,5 @@
 import React from 'react';
-import { GET_PROJECTS } from '../../apollo/operations/projects';
+import { GET_PROJECTS } from '../../apollo/operations';
 import { useQuery } from '@apollo/client';
 import InitialTable from './InitialTable';
 import { Loader } from '../';

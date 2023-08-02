@@ -1,6 +1,5 @@
 import React from 'react';
-import { BreadcrumbsNav } from '../components';
-import ProjectsTable from '../components/tables/ProjectsTable';
+import { BreadcrumbsNav, ProjectsTable } from '../components';
 
 export default function Projects() {
   return (

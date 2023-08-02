@@ -7,5 +7,6 @@ import BreadcrumbsNav from './BreadcrumbsNav';
 import EmployeesTable from './tables/EmployeesTable';
 import Header from './header/Header';
 import AuthForm from './auth/AuthForm';
+import ProjectsTable from './tables/ProjectsTable';
 
-export { Search, MoreMenu, Loader, LinkTab, ErrorBar, BreadcrumbsNav, EmployeesTable, Header, AuthForm };
+export { Search, MoreMenu, Loader, LinkTab, ErrorBar, BreadcrumbsNav, EmployeesTable, Header, AuthForm, ProjectsTable };
