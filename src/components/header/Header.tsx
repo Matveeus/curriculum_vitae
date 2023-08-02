@@ -9,7 +9,7 @@ import SideMenu from './SideMenu';
 import UserMenu from './UserMenu';
 
 export default function Header() {
-  const user = useTypedSelector(state => state.auth.currentUser);
+  const user = useTypedSelector(state => state.auth.currentUser!);
 
   return (
     <AppBar sx={{ minHeight: 65, bgcolor: '#2e2e2e' }} position="sticky">
@@ -18,7 +18,9 @@ export default function Header() {
           {user ? (
             <>
               <SideMenu />
-              <Typography sx={{ mr: '10px', ml: 'auto' }}>{user?.profile?.full_name || user?.email}</Typography>
+              <Typography sx={{ mr: 1, ml: 'auto', color: 'inherit' }}>
+                {user.profile.full_name || user.email}
+              </Typography>
               <UserMenu user={user} />
             </>
           ) : (
