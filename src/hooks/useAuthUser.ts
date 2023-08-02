@@ -1,16 +1,16 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { SIGN_UP, LOGIN } from '../apollo/auth';
-import { AuthResult, MutationSignupArgs, QueryLoginArgs, User } from '../apollo/types';
+import { SIGN_UP, LOG_IN } from '../apollo/operations';
 import routes from '../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedDispatch } from './useTypedDispatch';
 import { setCurrentUser } from '../store/authSlice';
+import type { AuthResult, MutationSignupArgs, QueryLoginArgs, User } from '../apollo/types';
 
 export function useAuthUser() {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
   const [registerUser] = useMutation<{ signup: AuthResult }, MutationSignupArgs>(SIGN_UP);
-  const [loginUser] = useLazyQuery<{ login: AuthResult }, QueryLoginArgs>(LOGIN);
+  const [loginUser] = useLazyQuery<{ login: AuthResult }, QueryLoginArgs>(LOG_IN);
 
   const saveTokenAndUser = (token: string, user: User) => {
     dispatch(setCurrentUser(user));

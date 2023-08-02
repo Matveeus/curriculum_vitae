@@ -3,19 +3,16 @@ import { Outlet, useLocation, useParams } from 'react-router-dom';
 import last from 'lodash/last';
 import capitalize from 'lodash/capitalize';
 import { useQuery } from '@apollo/client';
-import { GET_USER_DATA } from '../apollo/employeesData';
-import { GET_SELECT_LISTS } from '../apollo/selectLists';
+import { GET_USER, GET_SELECT_LISTS } from '../apollo/operations';
 import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import BreadcrumbsNav from '../components/BreadcrumbsNav';
-import LinkTab from '../components/LinkTab';
-import Loader from '../components/Loader';
+import { Loader, LinkTab, BreadcrumbsNav } from '../components';
 
 export default function User() {
   const { id } = useParams();
-  const userQuery = useQuery(GET_USER_DATA, { variables: { id } });
+  const userQuery = useQuery(GET_USER, { variables: { id } });
   const listsQuery = useQuery(GET_SELECT_LISTS);
   const { pathname } = useLocation();
 

@@ -14,7 +14,7 @@ interface MoreMenuProps {
   menuItems: MenuItemData[];
 }
 
-export function MoreMenu({ menuItems }: MoreMenuProps) {
+export default function MoreMenu({ menuItems }: MoreMenuProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 

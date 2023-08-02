@@ -1,11 +1,10 @@
 import React from 'react';
-import { EmployeesTable } from '../components/tables/EmployeesTable';
-import BreadcrumbsNav from '../components/BreadcrumbsNav';
+import { BreadcrumbsNav, EmployeesTable } from '../components';
 
 export default function Employees() {
   return (
     <>
-      <BreadcrumbsNav paths={[{ text: 'Employees', route: '' }]} />
+      <BreadcrumbsNav paths={[{ text: 'Employees' }]} />
       <EmployeesTable />
     </>
   );

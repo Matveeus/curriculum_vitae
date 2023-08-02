@@ -6,11 +6,11 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Avatar } from '@mui/material';
-import { MenuItemData, MoreMenu } from '../MoreMenu';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Search from '../Search';
-import { sortRows, filterRows } from '../../utils/tableUtils';
+import Avatar from '@mui/material/Avatar';
+import { Search, MoreMenu } from '../';
+import { sortRows, filterRows } from '../../utils';
+import type { MenuItemData } from '../MoreMenu';
 
 export interface Column {
   id: string;
@@ -32,7 +32,7 @@ interface InitialTableProps {
 
 export type Order = 'asc' | 'desc';
 
-export function InitialTable({ columns, rows }: InitialTableProps) {
+export default function InitialTable({ columns, rows }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('');
   const [searchInput, setSearchInput] = React.useState('');
