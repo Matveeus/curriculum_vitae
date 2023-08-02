@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -29,22 +29,15 @@ export interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
-  error?: string | null;
+  error?: string;
 }
 
 export type Order = 'asc' | 'desc';
 
 export default function InitialTable({ columns, rows, error }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
-  const [err, setErr] = React.useState<string | null>(null);
   const [orderBy, setOrderBy] = React.useState<string>('');
   const [searchInput, setSearchInput] = React.useState('');
-
-  useEffect(() => {
-    if (error) {
-      setErr(error);
-    }
-  }, [error]);
 
   const handleRequestSort = (property: string) => {
     const columnToSort = columns.find(column => column.id === property);
@@ -125,7 +118,7 @@ export default function InitialTable({ columns, rows, error }: InitialTableProps
           </Table>
         </TableContainer>
       </Paper>
-      <ErrorBar error={err} setError={setErr} />
+      <ErrorBar error={error || ''} />
     </>
   );
 }

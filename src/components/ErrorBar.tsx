@@ -3,10 +3,9 @@ import { Alert, Snackbar } from '@mui/material';
 
 interface ErrorBarProps {
   error: string | null;
-  setError: (error: string | null) => void;
 }
 
-export default function ErrorBar({ error, setError }: ErrorBarProps) {
+export default function ErrorBar({ error }: ErrorBarProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -16,7 +15,6 @@ export default function ErrorBar({ error, setError }: ErrorBarProps) {
   }, [error]);
 
   const handleClose = () => {
-    setError(null);
     setOpen(false);
   };
   return (

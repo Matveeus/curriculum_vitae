@@ -63,5 +63,5 @@ export default function EmployeesTable() {
     ],
   }));
 
-  return <InitialTable columns={columns} rows={rows} error={error?.message || null} />;
+  return <InitialTable columns={columns} rows={rows} error={error?.message || ''} />;
 }
