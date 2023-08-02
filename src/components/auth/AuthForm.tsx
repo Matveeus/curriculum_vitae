@@ -134,60 +134,62 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Container
-        maxWidth="sm"
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
-      >
-        <Box
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Container
+          maxWidth="sm"
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            border: '2px solid',
-            borderColor: 'primary.main',
-            borderRadius: '10px',
-            padding: '20px',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
           }}
         >
-          <Typography component="h1" variant="h5" color={'black'} sx={{ padding: '10px 0' }}>
-            {title}
-          </Typography>
-          <TextField
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /^\S+@\S+$/i,
-                message: 'Invalid email address',
-              },
-            })}
-            name="email"
-            error={!!errors?.email}
-            helperText={!!errors?.email && (errors?.email?.message as string)}
-            margin="normal"
-            fullWidth
-            id="email"
-            label="Email Address"
-            onChange={handleEmailChange}
-            value={email}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              border: '2px solid',
+              borderColor: 'primary.main',
+              borderRadius: '10px',
+              padding: '20px',
+            }}
+          >
+            <Typography component="h1" variant="h5" color={'black'} sx={{ padding: '10px 0' }}>
+              {title}
+            </Typography>
+            <TextField
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: 'Invalid email address',
+                },
+              })}
+              name="email"
+              error={!!errors?.email}
+              helperText={!!errors?.email && (errors?.email?.message as string)}
+              margin="normal"
+              fullWidth
+              id="email"
+              label="Email Address"
+              onChange={handleEmailChange}
+              value={email}
+            />
+            {renderPasswordField()}
+            {title === 'Registration' && renderPasswordConfirmField()}
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+              {buttonTitle}
+            </Button>
+          </Box>
+          <AuthSwitch
+            text={title === 'Sign in' ? "Don't have an account? Register!" : 'Already have an account? Sign In!'}
+            href={title === 'Sign in' ? routes.register() : routes.login()}
           />
-          {renderPasswordField()}
-          {title === 'Registration' && renderPasswordConfirmField()}
-          <ErrorBar error={err} setError={setErr} />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-            {buttonTitle}
-          </Button>
-        </Box>
-        <AuthSwitch
-          text={title === 'Sign in' ? "Don't have an account? Register!" : 'Already have an account? Sign In!'}
-          href={title === 'Sign in' ? routes.register() : routes.login()}
-        />
-      </Container>
-    </form>
+        </Container>
+      </form>
+      <ErrorBar error={err} setError={setErr} />
+    </>
   );
 }

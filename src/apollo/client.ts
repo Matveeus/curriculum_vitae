@@ -1,8 +1,6 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
-console.log(process.env.API_URI);
-
 const httpLink = createHttpLink({
   uri: process.env.API_URI || '',
 });
