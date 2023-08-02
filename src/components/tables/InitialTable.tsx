@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,6 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import { Search, MoreMenu } from '../';
 import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
+import ErrorBar from '../ErrorBar';
 
 export interface Column {
   id: string;
@@ -28,14 +29,22 @@ export interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
+  error?: string | null;
 }
 
 export type Order = 'asc' | 'desc';
 
-export default function InitialTable({ columns, rows }: InitialTableProps) {
+export default function InitialTable({ columns, rows, error }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
+  const [err, setErr] = React.useState<string | null>(null);
   const [orderBy, setOrderBy] = React.useState<string>('');
   const [searchInput, setSearchInput] = React.useState('');
+
+  useEffect(() => {
+    if (error) {
+      setErr(error);
+    }
+  }, [error]);
 
   const handleRequestSort = (property: string) => {
     const columnToSort = columns.find(column => column.id === property);
@@ -116,6 +125,7 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
           </Table>
         </TableContainer>
       </Paper>
+      <ErrorBar error={err} setError={setErr} />
     </>
   );
 }

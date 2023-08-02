@@ -27,7 +27,6 @@ export default function ProjectsTable() {
   const { loading, error, data } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
 
   if (loading) return <Loader />;
-  if (error) return <p>Error: {error.message}</p>;
 
   const projects = data?.projects || [];
 
@@ -63,5 +62,5 @@ export default function ProjectsTable() {
     ],
   }));
 
-  return <InitialTable columns={columns} rows={rows} />;
+  return <InitialTable columns={columns} rows={rows} error={error?.message || null} />;
 }
