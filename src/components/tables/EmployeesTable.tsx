@@ -10,6 +10,7 @@ import { getUserNameAbbreviation } from '../../utils';
 import type { User } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
 import type { Column } from './InitialTable';
+import ErrorBar from '../ErrorBar';
 
 interface Data {
   id: string;
@@ -28,7 +29,6 @@ export default function EmployeesTable() {
   const { loading, error, data } = useQuery<{ users: User[] }>(GET_USERS);
 
   if (loading) return <Loader />;
-  if (error) return <p>Error: {error.message}</p>;
 
   const users = data?.users || [];
 
@@ -64,5 +64,10 @@ export default function EmployeesTable() {
     ],
   }));
 
-  return <InitialTable columns={columns} rows={rows} />;
+  return (
+    <>
+      <InitialTable columns={columns} rows={rows} />
+      <ErrorBar error={error?.message || ''} />
+    </>
+  );
 }

@@ -26,7 +26,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordRepeat] = useState('');
-  const [err, setErr] = useState<string | null>(null);
+  const [err, setErr] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   const { handleRegistration, handleLogin } = useAuthUser();
@@ -194,7 +194,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
           />
         </Container>
       </form>
-      <ErrorBar error={err} setError={setErr} />
+      <ErrorBar error={err} />
     </>
   );
 }
