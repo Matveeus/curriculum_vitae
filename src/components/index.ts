@@ -7,5 +7,19 @@ import BreadcrumbsNav from './BreadcrumbsNav';
 import EmployeesTable from './tables/EmployeesTable';
 import Header from './header/Header';
 import AuthForm from './auth/AuthForm';
+import ProjectsTable from './tables/ProjectsTable';
+import CVsTable from './tables/CVsTable';
 
-export { Search, MoreMenu, Loader, LinkTab, ErrorBar, BreadcrumbsNav, EmployeesTable, Header, AuthForm };
+export {
+  Search,
+  MoreMenu,
+  Loader,
+  LinkTab,
+  ErrorBar,
+  BreadcrumbsNav,
+  EmployeesTable,
+  Header,
+  AuthForm,
+  ProjectsTable,
+  CVsTable,
+};

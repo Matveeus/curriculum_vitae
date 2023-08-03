@@ -17,8 +17,8 @@ export interface Column {
   label: string;
   minWidth?: number;
   align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
-  format?: (value: number) => string;
   searchable?: boolean;
+  sortable?: boolean;
 }
 
 export interface Row {
@@ -40,7 +40,7 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
   const handleRequestSort = (property: string) => {
     const columnToSort = columns.find(column => column.id === property);
 
-    if (columnToSort) {
+    if (columnToSort && columnToSort.sortable) {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(property);
@@ -70,7 +70,7 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
                     align={column.align || 'center'}
                     sortDirection={orderBy === column.id ? order : false}
                   >
-                    {column.label !== '' ? (
+                    {column.sortable ? (
                       <TableSortLabel
                         active={orderBy === column.id}
                         direction={orderBy === column.id ? order : 'asc'}
@@ -97,6 +97,18 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
                             <Avatar src={cellValue} alt="avatar">
                               {cellValue}
                             </Avatar>
+                          ) : column.id === 'projects' ? (
+                            <>
+                              {Array.isArray(cellValue) ? (
+                                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                                  {cellValue.map((project: string, index: number) => (
+                                    <li key={index}>{project}</li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                cellValue
+                              )}
+                            </>
                           ) : column.id === 'menuItems' ? (
                             Array.isArray(cellValue) ? (
                               <MoreMenu menuItems={cellValue as MenuItemData[]} />
