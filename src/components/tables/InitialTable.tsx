@@ -97,6 +97,18 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
                             <Avatar src={cellValue} alt="avatar">
                               {cellValue}
                             </Avatar>
+                          ) : column.id === 'projects' ? (
+                            <>
+                              {Array.isArray(cellValue) ? (
+                                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                                  {cellValue.map((project: string, index: number) => (
+                                    <li key={index}>{project}</li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                cellValue
+                              )}
+                            </>
                           ) : column.id === 'menuItems' ? (
                             Array.isArray(cellValue) ? (
                               <MoreMenu menuItems={cellValue as MenuItemData[]} />

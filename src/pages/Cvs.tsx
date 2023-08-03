@@ -1,10 +1,11 @@
 import React from 'react';
-import { BreadcrumbsNav } from '../components';
+import { BreadcrumbsNav, CVsTable } from '../components';
 
 export default function Cvs() {
   return (
     <>
       <BreadcrumbsNav paths={[{ text: 'CVs' }]} />
+      <CVsTable />
     </>
   );
 }
