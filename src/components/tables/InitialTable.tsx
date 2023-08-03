@@ -17,8 +17,8 @@ export interface Column {
   label: string;
   minWidth?: number;
   align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
-  format?: (value: number) => string;
   searchable?: boolean;
+  sortable?: boolean;
 }
 
 export interface Row {
@@ -40,7 +40,7 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
   const handleRequestSort = (property: string) => {
     const columnToSort = columns.find(column => column.id === property);
 
-    if (columnToSort) {
+    if (columnToSort && columnToSort.sortable) {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(property);
@@ -70,7 +70,7 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
                     align={column.align || 'center'}
                     sortDirection={orderBy === column.id ? order : false}
                   >
-                    {column.label !== '' ? (
+                    {column.sortable ? (
                       <TableSortLabel
                         active={orderBy === column.id}
                         direction={orderBy === column.id ? order : 'asc'}

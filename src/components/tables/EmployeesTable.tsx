@@ -34,11 +34,11 @@ export default function EmployeesTable() {
 
   const columns: Column[] = [
     { id: 'avatar', label: '', align: 'center' },
-    { id: 'firstName', label: 'First Name', align: 'center', searchable: true },
-    { id: 'lastName', label: 'Last Name', align: 'center', searchable: true },
-    { id: 'email', label: 'Email', align: 'center' },
-    { id: 'department', label: 'Department', align: 'center' },
-    { id: 'position', label: 'Position', align: 'center' },
+    { id: 'firstName', label: 'First Name', align: 'center', searchable: true, sortable: true },
+    { id: 'lastName', label: 'Last Name', align: 'center', searchable: true, sortable: true },
+    { id: 'email', label: 'Email', align: 'center', sortable: true },
+    { id: 'department', label: 'Department', align: 'center', sortable: true },
+    { id: 'position', label: 'Position', align: 'center', sortable: true },
     { id: 'menuItems', label: '', align: 'center' },
   ];
 

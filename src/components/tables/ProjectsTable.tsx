@@ -32,11 +32,11 @@ export default function ProjectsTable() {
   const projects = data?.projects || [];
 
   const columns: Column[] = [
-    { id: 'name', label: 'Name', align: 'center', searchable: true },
-    { id: 'internalName', label: 'Internal Name', align: 'center', searchable: true },
-    { id: 'startDate', label: 'Start Date', align: 'center' },
-    { id: 'endDate', label: 'End Date', align: 'center' },
-    { id: 'domain', label: 'Domain', align: 'center' },
+    { id: 'name', label: 'Name', align: 'center', searchable: true, sortable: true },
+    { id: 'internalName', label: 'Internal Name', align: 'center', searchable: true, sortable: true },
+    { id: 'startDate', label: 'Start Date', align: 'center', sortable: true },
+    { id: 'endDate', label: 'End Date', align: 'center', sortable: true },
+    { id: 'domain', label: 'Domain', align: 'center', sortable: true },
     { id: 'teamSize', label: 'Team Size', align: 'center' },
     { id: 'menuItems', label: '', align: 'center' },
   ];

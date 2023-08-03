@@ -30,7 +30,7 @@ export default function CVsTable() {
   const cvs = data?.cvs || [];
 
   const columns: Column[] = [
-    { id: 'name', label: 'Name', align: 'center', searchable: true },
+    { id: 'name', label: 'Name', align: 'center', searchable: true, sortable: true },
     { id: 'description', label: 'Description', align: 'center' },
     { id: 'email', label: 'Employee email', align: 'center' },
     { id: 'projects', label: 'Employee projects', align: 'left' },
