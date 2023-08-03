@@ -8,7 +8,6 @@ const PROJECT_DATA = gql`
     start_date
     end_date
     domain
-    team_size
   }
 `;
 
@@ -17,6 +16,17 @@ export const GET_PROJECTS = gql`
   query GetProjects {
     projects {
       ...ProjectData
+      team_size
+    }
+  }
+`;
+
+export const GET_PROJECT = gql`
+  ${PROJECT_DATA}
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      ...ProjectData
+      description
     }
   }
 `;
