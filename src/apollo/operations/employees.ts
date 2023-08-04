@@ -52,10 +52,24 @@ export const GET_USER = gql`
           proficiency
         }
       }
+      department {
+        id
+      }
+      position {
+        id
+      }
       cvs {
         id
         name
       }
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: ID!, $user: UpdateUserInput!) {
+    updateUser(id: $id, user: $user) {
+      id
     }
   }
 `;
