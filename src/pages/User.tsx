@@ -38,6 +38,7 @@ export default function User() {
             {
               icon: <PersonOutlineIcon />,
               text: user.profile.full_name || user.email,
+              color: 'primary',
               route: routes.employee(user.id),
             },
             {

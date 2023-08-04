@@ -10,6 +10,7 @@ import type { LinkProps } from '@mui/material';
 
 interface BreadcrumbsLink {
   text: string;
+  color?: string;
   route?: string;
   icon?: React.ReactElement;
 }
@@ -42,13 +43,11 @@ export default function BreadcrumbsNav({ paths }: BreadcrumbsNavProps) {
         <HomeOutlinedIcon /> Home
       </NavLink>
 
-      {paths.map(({ text, route, icon }, index) => {
-        const isPenult = index === paths.length - 2;
-
+      {paths.map(({ text, color, route, icon }, index) => {
         const linkInner = icon ? [icon, text] : text;
 
         return route ? (
-          <NavLink route={route} color={isPenult ? 'primary' : 'inherit'} key={index}>
+          <NavLink route={route} color={color || 'inherit'} key={index}>
             {linkInner}
           </NavLink>
         ) : (
