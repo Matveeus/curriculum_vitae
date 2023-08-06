@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -78,24 +78,30 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     }).catch(err => console.log(err));
   };
 
-  const TextInput = ({ name }: TextInputProps) => (
-    <TextField id={name} label={startCase(name)} {...register(name)} inputProps={{ readOnly: !readOnly }} fullWidth />
+  const TextInput = useCallback(
+    ({ name }: TextInputProps) => (
+      <TextField id={name} label={startCase(name)} {...register(name)} inputProps={{ readOnly: !readOnly }} fullWidth />
+    ),
+    [],
   );
 
-  const DateInput = ({ name }: DateInputProps) => (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <DatePicker
-          label={startCase(name)}
-          readOnly={!readOnly}
-          slotProps={{ textField: { fullWidth: true } }}
-          value={getValues(name)}
-          onChange={date => field.onChange(date)}
-        />
-      )}
-    />
+  const DateInput = useCallback(
+    ({ name }: DateInputProps) => (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <DatePicker
+            label={startCase(name)}
+            readOnly={!readOnly}
+            slotProps={{ textField: { fullWidth: true } }}
+            value={getValues(name)}
+            onChange={date => field.onChange(date)}
+          />
+        )}
+      />
+    ),
+    [],
   );
 
   return (
