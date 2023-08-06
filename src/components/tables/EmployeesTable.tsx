@@ -10,7 +10,7 @@ import { getUserNameAbbreviation } from '../../utils';
 import type { User } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
 import type { Column } from './InitialTable';
-import ErrorBar from '../ErrorBar';
+import InfoBar from '../InfoBar';
 
 interface Data {
   id: string;
@@ -67,7 +67,7 @@ export default function EmployeesTable() {
   return (
     <>
       <InitialTable columns={columns} rows={rows} />
-      {error ? <ErrorBar error={error.message} /> : null}
+      {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
 }

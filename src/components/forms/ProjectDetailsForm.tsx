@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -11,8 +11,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Box } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import { UPDATE_PROJECT } from '../../apollo/operations/projects';
+import { UPDATE_PROJECT } from '../../apollo/operations';
 import { useMutation } from '@apollo/client';
+import InfoBar from '../InfoBar';
 
 interface ProjectDetailsFormProps {
   project: Project;
@@ -36,7 +37,8 @@ interface DateInputProps {
 }
 
 export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps) {
-  const [updateProject, { loading }] = useMutation(UPDATE_PROJECT);
+  const [updateProject, { loading, error }] = useMutation(UPDATE_PROJECT);
+  const [successMessage, setSuccessMessage] = useState('');
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const readOnly = currentUser?.role !== 'admin';
 
@@ -59,23 +61,28 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     values: initialValues,
   });
 
-  const onSubmit: SubmitHandler<InputValues> = values => {
+  const onSubmit: SubmitHandler<InputValues> = async values => {
     const { name, internalName, description, domain, startDate, endDate } = values;
-    updateProject({
-      variables: {
-        id: project.id,
-        project: {
-          name: name,
-          internal_name: internalName,
-          description: description,
-          domain: domain,
-          start_date: startDate?.format('YYYY-MM-DD'),
-          end_date: endDate?.format('YYYY-MM-DD'),
-          team_size: project.team_size,
-          skillsIds: [],
+    try {
+      await updateProject({
+        variables: {
+          id: project.id,
+          project: {
+            name: name,
+            internal_name: internalName,
+            description: description,
+            domain: domain,
+            start_date: startDate?.format('YYYY-MM-DD'),
+            end_date: endDate?.format('YYYY-MM-DD'),
+            team_size: project.team_size,
+            skillsIds: [],
+          },
         },
-      },
-    }).catch(err => console.log(err));
+      });
+      setSuccessMessage('Project updated successfully');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const TextInput = useCallback(
@@ -105,40 +112,44 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
   );
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box
-        sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Grid container columnSpacing={3} rowSpacing={6}>
-          <Grid item xs={12} md={6}>
-            <TextInput name="name" />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextInput name="internalName" />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextInput name="description" />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextInput name="domain" />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <DateInput name="startDate" />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <DateInput name="endDate" />
-          </Grid>
-          {readOnly && (
-            <Grid item xs={12} md={6} ml="auto">
-              <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                Update
-              </Button>
+    <>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Box
+          sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Grid container columnSpacing={3} rowSpacing={6}>
+            <Grid item xs={12} md={6}>
+              <TextInput name="name" />
             </Grid>
-          )}
-        </Grid>
-      </Box>
-    </LocalizationProvider>
+            <Grid item xs={12} md={6}>
+              <TextInput name="internalName" />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextInput name="description" />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextInput name="domain" />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DateInput name="startDate" />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DateInput name="endDate" />
+            </Grid>
+            {readOnly && (
+              <Grid item xs={12} md={6} ml="auto">
+                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+                  Update
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+        </Box>
+      </LocalizationProvider>
+      {error ? <InfoBar text={error.message} status="error" /> : null}
+      {successMessage ? <InfoBar text={successMessage} status="success" /> : null}
+    </>
   );
 }

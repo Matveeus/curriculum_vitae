@@ -5,7 +5,7 @@ import routes from '../constants/routes';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../apollo/operations';
-import ErrorBar from '../components/ErrorBar';
+import InfoBar from '../components/InfoBar';
 import ProjectDetailsForm from '../components/forms/ProjectDetailsForm';
 
 export default function ProjectDetails() {
@@ -26,7 +26,7 @@ export default function ProjectDetails() {
         ]}
       />
       <ProjectDetailsForm project={project} />
-      {error ? <ErrorBar error={error.message} /> : null}
+      {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
 }
