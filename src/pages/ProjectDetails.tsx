@@ -5,10 +5,12 @@ import routes from '../constants/routes';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../apollo/operations';
+import ErrorBar from '../components/ErrorBar';
+import ProjectDetailsForm from '../components/forms/ProjectDetailsForm';
 
 export default function ProjectDetails() {
   const { id } = useParams();
-  const { data, loading } = useQuery(GET_PROJECT, { variables: { id } });
+  const { data, error, loading } = useQuery(GET_PROJECT, { variables: { id } });
   const project = data?.project;
 
   if (loading) {
@@ -23,6 +25,8 @@ export default function ProjectDetails() {
           { icon: <FolderIcon />, text: project?.name, route: routes.project(project?.id) },
         ]}
       />
+      <ProjectDetailsForm project={project} />
+      {error ? <ErrorBar error={error.message} /> : null}
     </>
   );
 }
