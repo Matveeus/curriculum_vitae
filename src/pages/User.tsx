@@ -11,18 +11,25 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { ErrorBar, Loader, LinkTab, BreadcrumbsNav } from '../components';
+import type { Department, Position } from '../apollo/types';
+
+interface QueryResult {
+  departments: Department[];
+  positions: Position[];
+}
 
 export default function User() {
   const { id } = useParams();
   const user = useTypedSelector(state => usersSelectors.selectById(state, id as string))!;
-  const { loading, error, data } = useQuery(GET_SELECT_LISTS);
+  const { loading, error, data } = useQuery<QueryResult>(GET_SELECT_LISTS);
   const { pathname } = useLocation();
 
   if (loading) {
     return <Loader />;
   }
 
-  const { departments, positions } = data;
+  const departments = data?.departments ?? [];
+  const positions = data?.positions ?? [];
   const currentTab = last(pathname.split('/'));
 
   return (
