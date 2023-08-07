@@ -2,6 +2,7 @@ import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { getUserNameAbbreviation } from '../utils';
+import roles from '../constants/roles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
@@ -17,7 +18,10 @@ export default function UserProfile() {
   const currentUser = useTypedSelector(state => state.auth.currentUser!);
 
   const dateOfUserCreation = new Date(+user.created_at).toDateString();
+
   const isProfileOwner = user.id === currentUser.id;
+  const isAdmin = currentUser.role === roles.ADMIN;
+  const hasWritePermission = isProfileOwner || isAdmin;
 
   return (
     <Box sx={{ maxWidth: 720, m: 'auto' }}>
@@ -30,7 +34,7 @@ export default function UserProfile() {
           {getUserNameAbbreviation(user)}
         </Avatar>
 
-        {isProfileOwner && <AvatarUploadForm />}
+        {hasWritePermission && <AvatarUploadForm />}
       </Box>
 
       <Box sx={{ mb: 8 }}>
@@ -43,7 +47,7 @@ export default function UserProfile() {
         <Typography>A member since {dateOfUserCreation}</Typography>
       </Box>
 
-      <ProfileUpdateForm readOnly={!isProfileOwner} />
+      <ProfileUpdateForm readOnly={!hasWritePermission} />
     </Box>
   );
 }
