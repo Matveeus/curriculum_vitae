@@ -10,12 +10,12 @@ import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import { Loader, LinkTab, BreadcrumbsNav } from '../components';
+import { ErrorBar, Loader, LinkTab, BreadcrumbsNav } from '../components';
 
 export default function User() {
   const { id } = useParams();
   const user = useTypedSelector(state => usersSelectors.selectById(state, id as string))!;
-  const { loading, data } = useQuery(GET_SELECT_LISTS);
+  const { loading, error, data } = useQuery(GET_SELECT_LISTS);
   const { pathname } = useLocation();
 
   if (loading) {
@@ -57,6 +57,8 @@ export default function User() {
 
         <Outlet context={{ user, departments, positions }} />
       </Box>
+
+      {error ? <ErrorBar error={error.message} /> : null}
     </>
   );
 }
