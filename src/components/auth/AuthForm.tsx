@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AuthSwitch from './AuthSwitch';
-import { Loader, ErrorBar } from '../';
+import { Loader, InfoBar } from '../';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import routes from '../../constants/routes';
 
@@ -194,7 +194,7 @@ export default function AuthForm({ buttonTitle, title }: AuthFormProps) {
           />
         </Container>
       </form>
-      {err ? <ErrorBar error={err} /> : null}
+      {err ? <InfoBar text={err} status="error" /> : null}
     </>
   );
 }

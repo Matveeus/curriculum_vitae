@@ -16,6 +16,7 @@ import Skills from './Skills';
 import Languages from './Languages';
 import User from './User';
 import UserProfile from './UserProfile';
+import ProjectDetails from './ProjectDetails';
 
 export function Router() {
   return (
@@ -38,6 +39,7 @@ export function Router() {
               </Route>
 
               <Route path="projects" element={<Projects />} />
+              <Route path="projects/:id" element={<ProjectDetails />} />
               <Route path="cvs" element={<Cvs />} />
               <Route path="departments" element={<Departments />} />
               <Route path="positions" element={<Positions />} />

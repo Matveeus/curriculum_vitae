@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 
 interface ErrorBarProps {
-  error: string;
+  text: string;
+  status: 'success' | 'info' | 'warning' | 'error';
 }
 
-export default function ErrorBar({ error }: ErrorBarProps) {
+export default function InfoBar({ text, status }: ErrorBarProps) {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
@@ -14,7 +15,7 @@ export default function ErrorBar({ error }: ErrorBarProps) {
 
   return (
     <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-      <Alert severity="error">{error}</Alert>
+      <Alert severity={status}>{text}</Alert>
     </Snackbar>
   );
 }

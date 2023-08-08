@@ -20,3 +20,21 @@ export const GET_PROJECTS = gql`
     }
   }
 `;
+
+export const GET_PROJECT = gql`
+  ${PROJECT_DATA}
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      ...ProjectData
+      description
+    }
+  }
+`;
+
+export const UPDATE_PROJECT = gql`
+  mutation updateProject($id: ID!, $project: ProjectInput!) {
+    updateProject(id: $id, project: $project) {
+      id
+    }
+  }
+`;
