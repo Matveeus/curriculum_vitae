@@ -42,6 +42,8 @@ export const UPDATE_USER = gql`
   mutation UpdateUser($id: ID!, $user: UpdateUserInput!) {
     updateUser(id: $id, user: $user) {
       id
+      department_name
+      position_name
       profile {
         first_name
         last_name
