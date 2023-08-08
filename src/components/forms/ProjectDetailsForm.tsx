@@ -24,12 +24,19 @@ interface InputValues {
   internalName: string;
   description: string;
   domain: string;
+  teamSize: number;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
 }
 
 interface TextInputProps {
   name: 'name' | 'internalName' | 'description' | 'domain';
+  isRequired: boolean;
+  rows?: number;
+}
+
+interface NumberInputProps {
+  name: 'teamSize';
 }
 
 interface DateInputProps {
@@ -46,6 +53,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     internalName: project.internal_name ?? '',
     description: project.description ?? '',
     domain: project.domain ?? '',
+    teamSize: project.team_size ?? 0,
     startDate: project.start_date ? dayjs(project.start_date) : null,
     endDate: project.end_date ? dayjs(project.end_date) : null,
   };
@@ -55,13 +63,13 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     control,
     handleSubmit,
     getValues,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm<InputValues>({
     values: initialValues,
   });
 
   const onSubmit: SubmitHandler<InputValues> = async values => {
-    const { name, internalName, description, domain, startDate, endDate } = values;
+    const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
     try {
       await updateProject({
         variables: {
@@ -71,9 +79,9 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
             internal_name: internalName,
             description: description,
             domain: domain,
+            team_size: Number(teamSize),
             start_date: startDate?.format('YYYY-MM-DD'),
             end_date: endDate?.format('YYYY-MM-DD'),
-            team_size: project.team_size,
             skillsIds: [],
           },
         },
@@ -84,8 +92,36 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
   };
 
   const TextInput = useCallback(
-    ({ name }: TextInputProps) => (
-      <TextField id={name} label={startCase(name)} {...register(name)} inputProps={{ readOnly: !isAdmin }} fullWidth />
+    ({ name, isRequired, rows }: TextInputProps) => (
+      <TextField
+        id={name}
+        label={startCase(name)}
+        {...register(name, {
+          ...(isRequired ? { required: `${startCase(name)} is required` } : {}),
+        })}
+        inputProps={{ readOnly: !isAdmin }}
+        fullWidth
+        multiline={rows !== undefined}
+        rows={rows !== undefined ? rows : 1}
+        error={!!errors[name]}
+        helperText={errors[name] ? errors[name]?.message : ''}
+      />
+    ),
+    [errors],
+  );
+
+  const NumberInput = useCallback(
+    ({ name }: NumberInputProps) => (
+      <TextField
+        type="number"
+        id={name}
+        label={startCase(name)}
+        {...register(name, {
+          required: `${startCase(name)} is required`,
+        })}
+        inputProps={{ readOnly: !isAdmin, min: 1 }}
+        fullWidth
+      />
     ),
     [],
   );
@@ -119,22 +155,25 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
         >
           <Grid container columnSpacing={3} rowSpacing={6}>
             <Grid item xs={12} md={6}>
-              <TextInput name="name" />
+              <TextInput name="name" isRequired={true} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextInput name="internalName" />
+              <TextInput name="internalName" isRequired={false} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextInput name="description" />
+              <TextInput name="domain" isRequired={true} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextInput name="domain" />
+              <NumberInput name="teamSize" />
             </Grid>
             <Grid item xs={12} md={6}>
               <DateInput name="startDate" />
             </Grid>
             <Grid item xs={12} md={6}>
               <DateInput name="endDate" />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <TextInput name="description" isRequired={true} rows={3} />
             </Grid>
             {isAdmin && (
               <Grid item xs={12} md={6} ml="auto">
