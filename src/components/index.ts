@@ -9,6 +9,8 @@ import Header from './header/Header';
 import AuthForm from './auth/AuthForm';
 import ProjectsTable from './tables/ProjectsTable';
 import CVsTable from './tables/CVsTable';
+import ProfileUpdateForm from './profile/ProfileUpdateForm';
+import AvatarUploadForm from './profile/AvatarUploadForm';
 
 export {
   Search,
@@ -22,4 +24,6 @@ export {
   AuthForm,
   ProjectsTable,
   CVsTable,
+  ProfileUpdateForm,
+  AvatarUploadForm,
 };

@@ -1,48 +1,30 @@
 import { gql } from '@apollo/client';
 
-const USER_DATA = gql`
-  fragment UserData on User {
-    id
-    created_at
-    email
-    department_name
-    position_name
-    role
-  }
-`;
-
-const PROFILE_DATA = gql`
-  fragment ProfileData on Profile {
-    id
-    first_name
-    last_name
-    full_name
-    avatar
-  }
-`;
-
 export const GET_USERS = gql`
-  ${USER_DATA}
-  ${PROFILE_DATA}
   query GetUsers {
     users {
-      ...UserData
-      is_verified
-      profile {
-        ...ProfileData
+      id
+      created_at
+      email
+      department_name
+      position_name
+      role
+      department {
+        id
       }
-    }
-  }
-`;
-
-export const GET_USER = gql`
-  ${USER_DATA}
-  ${PROFILE_DATA}
-  query GetUser($id: ID!) {
-    user(id: $id) {
-      ...UserData
+      position {
+        id
+      }
+      cvs {
+        id
+        name
+      }
       profile {
-        ...ProfileData
+        id
+        first_name
+        last_name
+        full_name
+        avatar
         skills {
           skill_name
           mastery
@@ -52,9 +34,24 @@ export const GET_USER = gql`
           proficiency
         }
       }
-      cvs {
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: ID!, $user: UpdateUserInput!) {
+    updateUser(id: $id, user: $user) {
+      id
+      profile {
+        first_name
+        last_name
+        full_name
+      }
+      department {
         id
-        name
+      }
+      position {
+        id
       }
     }
   }
