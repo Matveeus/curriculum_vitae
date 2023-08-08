@@ -10,7 +10,7 @@ import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import { ErrorBar, Loader, LinkTab, BreadcrumbsNav } from '../components';
+import { InfoBar, Loader, LinkTab, BreadcrumbsNav } from '../components';
 import type { Department, Position } from '../apollo/types';
 
 interface QueryResult {
@@ -65,7 +65,7 @@ export default function User() {
         <Outlet context={{ user, departments, positions }} />
       </Box>
 
-      {error ? <ErrorBar error={error.message} /> : null}
+      {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
 }
