@@ -2,48 +2,26 @@ import React, { useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import type { Project } from '../../apollo/types';
-import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import startCase from 'lodash/startCase';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Box } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { UPDATE_PROJECT } from '../../apollo/operations';
+import dayjs from 'dayjs';
+import { UPDATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
-import InfoBar from '../InfoBar';
+import InfoBar from '../../InfoBar';
+import {
+  DateInputProps,
+  InputValues,
+  NumberInputProps,
+  ProjectFormProps,
+  TextInputProps,
+} from './ProjectFormInterfaces';
 
-interface ProjectDetailsFormProps {
-  project: Project;
-}
-
-interface InputValues {
-  name: string;
-  internalName: string;
-  description: string;
-  domain: string;
-  teamSize: number;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-}
-
-interface TextInputProps {
-  name: 'name' | 'internalName' | 'description' | 'domain';
-  isRequired: boolean;
-  rows?: number;
-}
-
-interface NumberInputProps {
-  name: 'teamSize';
-}
-
-interface DateInputProps {
-  name: 'startDate' | 'endDate';
-}
-
-export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps) {
+export default function ProjectDetailsForm({ project }: ProjectFormProps) {
   const [updateProject, { loading, error, data }] = useMutation(UPDATE_PROJECT);
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === 'Admin';
