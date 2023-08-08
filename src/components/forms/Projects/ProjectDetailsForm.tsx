@@ -2,41 +2,26 @@ import React, { useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import type { Project } from '../../apollo/types';
-import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import startCase from 'lodash/startCase';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Box } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { UPDATE_PROJECT } from '../../apollo/operations';
+import dayjs from 'dayjs';
+import { UPDATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
-import InfoBar from '../InfoBar';
+import InfoBar from '../../InfoBar';
+import {
+  DateInputProps,
+  InputValues,
+  NumberInputProps,
+  ProjectFormProps,
+  TextInputProps,
+} from './ProjectFormInterfaces';
 
-interface ProjectDetailsFormProps {
-  project: Project;
-}
-
-interface InputValues {
-  name: string;
-  internalName: string;
-  description: string;
-  domain: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-}
-
-interface TextInputProps {
-  name: 'name' | 'internalName' | 'description' | 'domain';
-}
-
-interface DateInputProps {
-  name: 'startDate' | 'endDate';
-}
-
-export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps) {
+export default function ProjectDetailsForm({ project }: ProjectFormProps) {
   const [updateProject, { loading, error, data }] = useMutation(UPDATE_PROJECT);
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === 'Admin';
@@ -46,6 +31,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     internalName: project.internal_name ?? '',
     description: project.description ?? '',
     domain: project.domain ?? '',
+    teamSize: project.team_size ?? 0,
     startDate: project.start_date ? dayjs(project.start_date) : null,
     endDate: project.end_date ? dayjs(project.end_date) : null,
   };
@@ -55,13 +41,13 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     control,
     handleSubmit,
     getValues,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm<InputValues>({
     values: initialValues,
   });
 
   const onSubmit: SubmitHandler<InputValues> = async values => {
-    const { name, internalName, description, domain, startDate, endDate } = values;
+    const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
     try {
       await updateProject({
         variables: {
@@ -71,9 +57,9 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
             internal_name: internalName,
             description: description,
             domain: domain,
+            team_size: Number(teamSize),
             start_date: startDate?.format('YYYY-MM-DD'),
             end_date: endDate?.format('YYYY-MM-DD'),
-            team_size: project.team_size,
             skillsIds: [],
           },
         },
@@ -84,8 +70,36 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
   };
 
   const TextInput = useCallback(
-    ({ name }: TextInputProps) => (
-      <TextField id={name} label={startCase(name)} {...register(name)} inputProps={{ readOnly: !isAdmin }} fullWidth />
+    ({ name, isRequired, rows }: TextInputProps) => (
+      <TextField
+        id={name}
+        label={startCase(name)}
+        {...register(name, {
+          ...(isRequired ? { required: `${startCase(name)} is required` } : {}),
+        })}
+        inputProps={{ readOnly: !isAdmin }}
+        fullWidth
+        multiline={rows !== undefined}
+        rows={rows !== undefined ? rows : 1}
+        error={!!errors[name]}
+        helperText={errors[name] ? errors[name]?.message : ''}
+      />
+    ),
+    [errors],
+  );
+
+  const NumberInput = useCallback(
+    ({ name }: NumberInputProps) => (
+      <TextField
+        type="number"
+        id={name}
+        label={startCase(name)}
+        {...register(name, {
+          required: `${startCase(name)} is required`,
+        })}
+        inputProps={{ readOnly: !isAdmin, min: 1 }}
+        fullWidth
+      />
     ),
     [],
   );
@@ -119,22 +133,25 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
         >
           <Grid container columnSpacing={3} rowSpacing={6}>
             <Grid item xs={12} md={6}>
-              <TextInput name="name" />
+              <TextInput name="name" isRequired={true} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextInput name="internalName" />
+              <TextInput name="internalName" isRequired={false} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextInput name="description" />
+              <TextInput name="domain" isRequired={true} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextInput name="domain" />
+              <NumberInput name="teamSize" />
             </Grid>
             <Grid item xs={12} md={6}>
               <DateInput name="startDate" />
             </Grid>
             <Grid item xs={12} md={6}>
               <DateInput name="endDate" />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <TextInput name="description" isRequired={true} rows={3} />
             </Grid>
             {isAdmin && (
               <Grid item xs={12} md={6} ml="auto">

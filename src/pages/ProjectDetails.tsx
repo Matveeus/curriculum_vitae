@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../apollo/operations';
 import InfoBar from '../components/InfoBar';
-import ProjectDetailsForm from '../components/forms/ProjectDetailsForm';
+import ProjectDetailsForm from '../components/forms/Projects/ProjectDetailsForm';
 
 export default function ProjectDetails() {
   const { id } = useParams();
