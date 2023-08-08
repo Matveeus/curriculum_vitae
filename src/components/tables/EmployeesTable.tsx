@@ -1,6 +1,7 @@
 import React from 'react';
 import InitialTable from './InitialTable';
 import routes from '../../constants/routes';
+import roles from '../../constants/roles';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { getUserNameAbbreviation } from '../../utils';
@@ -54,7 +55,7 @@ export default function EmployeesTable({ users }: EmployeesTableProps) {
       {
         text: 'Delete user',
         onClick: () => console.log('deleted'),
-        disabled: currentUser?.role !== 'admin',
+        disabled: currentUser?.role !== roles.ADMIN,
       },
     ],
   }));
