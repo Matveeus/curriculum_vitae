@@ -55,7 +55,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     control,
     handleSubmit,
     getValues,
-    formState: { isDirty, isSubmitted },
+    formState: { isDirty },
   } = useForm<InputValues>({
     values: initialValues,
   });
@@ -138,7 +138,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
             </Grid>
             {isAdmin && (
               <Grid item xs={12} md={6} ml="auto">
-                <Button type="submit" variant="contained" disabled={!isDirty || loading || isSubmitted} fullWidth>
+                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
                   Update
                 </Button>
               </Grid>
