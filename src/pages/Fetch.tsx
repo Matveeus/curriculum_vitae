@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client';
 import { GET_USERS } from '../apollo/operations';
 import { useTypedDispatch } from '../hooks/useTypedDispatch';
 import { setUsers } from '../store/usersSlice';
-import { ErrorBar, Loader } from '../components';
+import { InfoBar, Loader } from '../components';
 import type { User } from '../apollo/types';
 
 interface QueryResult {
@@ -25,5 +25,5 @@ export default function Fetch() {
     return <Loader />;
   }
 
-  return error ? <ErrorBar error={error.message} /> : <Outlet />;
+  return error ? <InfoBar text={error.message} status="error" /> : <Outlet />;
 }

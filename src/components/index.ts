@@ -2,7 +2,7 @@ import Search from './Search';
 import MoreMenu from './MoreMenu';
 import Loader from './Loader';
 import LinkTab from './LinkTab';
-import ErrorBar from './ErrorBar';
+import InfoBar from './InfoBar';
 import BreadcrumbsNav from './BreadcrumbsNav';
 import EmployeesTable from './tables/EmployeesTable';
 import Header from './header/Header';
@@ -17,7 +17,7 @@ export {
   MoreMenu,
   Loader,
   LinkTab,
-  ErrorBar,
+  InfoBar,
   BreadcrumbsNav,
   EmployeesTable,
   Header,
