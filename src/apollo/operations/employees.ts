@@ -8,6 +8,16 @@ const USER_DATA = gql`
     department_name
     position_name
     role
+    department {
+      id
+    }
+    position {
+      id
+    }
+    cvs {
+      id
+      name
+    }
   }
 `;
 
@@ -18,6 +28,14 @@ const PROFILE_DATA = gql`
     last_name
     full_name
     avatar
+    skills {
+      skill_name
+      mastery
+    }
+    languages {
+      language_name
+      proficiency
+    }
   }
 `;
 
@@ -27,7 +45,6 @@ export const GET_USERS = gql`
   query GetUsers {
     users {
       ...UserData
-      is_verified
       profile {
         ...ProfileData
       }
@@ -43,24 +60,6 @@ export const GET_USER = gql`
       ...UserData
       profile {
         ...ProfileData
-        skills {
-          skill_name
-          mastery
-        }
-        languages {
-          language_name
-          proficiency
-        }
-      }
-      department {
-        id
-      }
-      position {
-        id
-      }
-      cvs {
-        id
-        name
       }
     }
   }
@@ -70,6 +69,17 @@ export const UPDATE_USER = gql`
   mutation UpdateUser($id: ID!, $user: UpdateUserInput!) {
     updateUser(id: $id, user: $user) {
       id
+      profile {
+        first_name
+        last_name
+        full_name
+      }
+      department {
+        id
+      }
+      position {
+        id
+      }
     }
   }
 `;

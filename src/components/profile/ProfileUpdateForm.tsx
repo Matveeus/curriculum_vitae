@@ -4,6 +4,8 @@ import { useForm, Controller } from 'react-hook-form';
 import startCase from 'lodash/startCase';
 import { useMutation } from '@apollo/client';
 import { UPDATE_USER } from '../../apollo/operations';
+import { useTypedDispatch } from '../../hooks/useTypedDispatch';
+import { updateUser } from '../../store/usersSlice';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -45,7 +47,8 @@ interface OutletContext {
 
 export default function ProfileUpdateForm({ readOnly }: FormProps) {
   const { user, departments, positions } = useOutletContext<OutletContext>();
-  const [updateUser, { loading, error }] = useMutation(UPDATE_USER);
+  const [update, { loading, error }] = useMutation(UPDATE_USER);
+  const dispatch = useTypedDispatch();
 
   const initialValues: InputValues = {
     firstName: user.profile.first_name ?? '',
@@ -60,9 +63,9 @@ export default function ProfileUpdateForm({ readOnly }: FormProps) {
     formState: { isDirty },
   } = useForm<InputValues>({ values: initialValues });
 
-  const onSubmit: SubmitHandler<InputValues> = values => {
+  const onSubmit: SubmitHandler<InputValues> = async values => {
     const { firstName, lastName, department, position } = values;
-    updateUser({
+    const { data } = await update({
       variables: {
         id: user.id,
         user: {
@@ -72,6 +75,18 @@ export default function ProfileUpdateForm({ readOnly }: FormProps) {
         },
       },
     });
+    const result = data.updateUser;
+    const { first_name, last_name, full_name } = result.profile;
+    dispatch(
+      updateUser({
+        id: result.id,
+        changes: {
+          profile: { ...user.profile, first_name, last_name, full_name },
+          department: { id: result.department?.id } as Department,
+          position: { id: result.position?.id } as Position,
+        },
+      }),
+    );
   };
 
   const TextInput = useCallback(
