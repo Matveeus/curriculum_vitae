@@ -3,7 +3,9 @@ import { Outlet, useLocation, useParams } from 'react-router-dom';
 import last from 'lodash/last';
 import capitalize from 'lodash/capitalize';
 import { useQuery } from '@apollo/client';
-import { GET_USER, GET_SELECT_LISTS } from '../apollo/operations';
+import { GET_SELECT_LISTS } from '../apollo/operations';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { usersSelectors } from '../store/usersSlice';
 import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -12,18 +14,15 @@ import { Loader, LinkTab, BreadcrumbsNav } from '../components';
 
 export default function User() {
   const { id } = useParams();
-  const userQuery = useQuery(GET_USER, { variables: { id } });
-  const listsQuery = useQuery(GET_SELECT_LISTS);
+  const user = useTypedSelector(state => usersSelectors.selectById(state, id as string))!;
+  const { loading, data } = useQuery(GET_SELECT_LISTS);
   const { pathname } = useLocation();
-
-  const loading = userQuery.loading || listsQuery.loading;
 
   if (loading) {
     return <Loader />;
   }
 
-  const { user } = userQuery.data;
-  const { departments, positions } = listsQuery.data;
+  const { departments, positions } = data;
   const currentTab = last(pathname.split('/'));
 
   return (
@@ -38,6 +37,7 @@ export default function User() {
             {
               icon: <PersonOutlineIcon />,
               text: user.profile.full_name || user.email,
+              color: 'primary',
               route: routes.employee(user.id),
             },
             {

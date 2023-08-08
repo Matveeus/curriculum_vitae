@@ -1,16 +1,16 @@
 import React from 'react';
-import { GET_USERS } from '../../apollo/operations';
-import { useQuery } from '@apollo/client';
 import InitialTable from './InitialTable';
-import { Loader } from '../';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { getUserNameAbbreviation } from '../../utils';
-import type { User } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
 import type { Column } from './InitialTable';
-import InfoBar from '../InfoBar';
+import type { User } from '../../apollo/types';
+
+interface EmployeesTableProps {
+  users: User[];
+}
 
 interface Data {
   id: string;
@@ -23,14 +23,9 @@ interface Data {
   menuItems?: MenuItemData[];
 }
 
-export default function EmployeesTable() {
+export default function EmployeesTable({ users }: EmployeesTableProps) {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const { loading, error, data } = useQuery<{ users: User[] }>(GET_USERS);
-
-  if (loading) return <Loader />;
-
-  const users = data?.users || [];
 
   const columns: Column[] = [
     { id: 'avatar', label: '', align: 'center' },
@@ -64,10 +59,5 @@ export default function EmployeesTable() {
     ],
   }));
 
-  return (
-    <>
-      <InitialTable columns={columns} rows={rows} />
-      {error ? <InfoBar text={error.message} status="error" /> : null}
-    </>
-  );
+  return <InitialTable columns={columns} rows={rows} />;
 }
