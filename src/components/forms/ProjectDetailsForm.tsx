@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -37,10 +37,9 @@ interface DateInputProps {
 }
 
 export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps) {
-  const [updateProject, { loading, error }] = useMutation(UPDATE_PROJECT);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [updateProject, { loading, error, data }] = useMutation(UPDATE_PROJECT);
   const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const readOnly = currentUser?.role !== 'admin';
+  const isAdmin = currentUser?.role === 'Admin';
 
   const initialValues: InputValues = {
     name: project.name ?? '',
@@ -56,7 +55,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
     control,
     handleSubmit,
     getValues,
-    formState: { isDirty },
+    formState: { isDirty, isSubmitted },
   } = useForm<InputValues>({
     values: initialValues,
   });
@@ -79,7 +78,6 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
           },
         },
       });
-      setSuccessMessage('Project updated successfully');
     } catch (error) {
       console.error(error);
     }
@@ -87,7 +85,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
 
   const TextInput = useCallback(
     ({ name }: TextInputProps) => (
-      <TextField id={name} label={startCase(name)} {...register(name)} inputProps={{ readOnly: !readOnly }} fullWidth />
+      <TextField id={name} label={startCase(name)} {...register(name)} inputProps={{ readOnly: !isAdmin }} fullWidth />
     ),
     [],
   );
@@ -100,7 +98,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
         render={({ field }) => (
           <DatePicker
             label={startCase(name)}
-            readOnly={!readOnly}
+            readOnly={!isAdmin}
             slotProps={{ textField: { fullWidth: true } }}
             value={getValues(name)}
             onChange={date => field.onChange(date)}
@@ -138,9 +136,9 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
             <Grid item xs={12} md={6}>
               <DateInput name="endDate" />
             </Grid>
-            {readOnly && (
+            {isAdmin && (
               <Grid item xs={12} md={6} ml="auto">
-                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+                <Button type="submit" variant="contained" disabled={!isDirty || loading || isSubmitted} fullWidth>
                   Update
                 </Button>
               </Grid>
@@ -149,7 +147,7 @@ export default function ProjectDetailsForm({ project }: ProjectDetailsFormProps)
         </Box>
       </LocalizationProvider>
       {error ? <InfoBar text={error.message} status="error" /> : null}
-      {successMessage ? <InfoBar text={successMessage} status="success" /> : null}
+      {data !== undefined ? <InfoBar text="Project updated successfully" status="success" /> : null}
     </>
   );
 }
