@@ -12,13 +12,16 @@ import { CREATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
 import InfoBar from '../../InfoBar';
 import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from './ProjectFormInterfaces';
+import dayjs from 'dayjs';
 
 interface ProjectFormProps {
-  isAdmin: boolean;
+  showModal: boolean;
+  handleCloseModal: () => void;
 }
 
-export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
+export default function ProjectCreationForm({ showModal, handleCloseModal }: ProjectFormProps) {
   const [createProject, { loading, error, data }] = useMutation(CREATE_PROJECT);
+  const [initialStartDate] = useState(dayjs());
 
   const initialValues: InputValues = {
     name: '',
@@ -26,7 +29,7 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
     description: '',
     domain: '',
     teamSize: 1,
-    startDate: null,
+    startDate: initialStartDate,
     endDate: null,
   };
 
@@ -34,7 +37,6 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
     register,
     control,
     handleSubmit,
-    getValues,
     formState: { isDirty, errors },
   } = useForm<InputValues>({
     values: initialValues,
@@ -57,6 +59,7 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
           },
         },
       });
+      handleCloseModal();
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +73,6 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
         {...register(name, {
           ...(isRequired ? { required: `${startCase(name)} is required` } : {}),
         })}
-        inputProps={{ readOnly: !isAdmin }}
         fullWidth
         multiline={rows !== undefined}
         rows={rows !== undefined ? rows : 1}
@@ -90,7 +92,7 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
         {...register(name, {
           required: `${startCase(name)} is required`,
         })}
-        inputProps={{ readOnly: !isAdmin, min: 1 }}
+        inputProps={{ min: 1 }}
         fullWidth
       />
     ),
@@ -105,9 +107,8 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
         render={({ field }) => (
           <DatePicker
             label={startCase(name)}
-            readOnly={!isAdmin}
             slotProps={{ textField: { fullWidth: true } }}
-            value={getValues(name)}
+            value={field.value}
             onChange={date => field.onChange(date)}
           />
         )}
@@ -116,23 +117,21 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
     [],
   );
 
-  const [showModal, setShowModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
   return (
     <>
-      <button onClick={handleOpenModal}>Open Modal</button>
-      <Modal open={showModal} onClose={handleCloseModal}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Modal open={showModal} onClose={handleCloseModal}>
           <Box
-            sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
+            sx={{
+              maxWidth: 720,
+              position: 'absolute',
+              top: '50%',
+              right: '50%',
+              transform: 'translate(50%,-50%)',
+              background: '#ffffff',
+              padding: '30px',
+              borderRadius: '5px',
+            }}
             component="form"
             onSubmit={handleSubmit(onSubmit)}
           >
@@ -158,20 +157,22 @@ export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
               <Grid item xs={12} md={12}>
                 <TextInput name="description" isRequired={true} rows={3} />
               </Grid>
-              {isAdmin && (
-                <Grid item xs={12} md={6} ml="auto">
-                  <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                    Create
-                  </Button>
-                </Grid>
-              )}
+              <Grid item xs={12} md={3} ml="auto">
+                <Button onClick={handleCloseModal} fullWidth>
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+                  Create
+                </Button>
+              </Grid>
             </Grid>
           </Box>
-        </LocalizationProvider>
-      </Modal>
-
+        </Modal>
+      </LocalizationProvider>
       {error ? <InfoBar text={error.message} status="error" /> : null}
-      {data !== undefined ? <InfoBar text="Project updated successfully" status="success" /> : null}
+      {data !== undefined ? <InfoBar text="Project added successfully" status="success" /> : null}
     </>
   );
 }

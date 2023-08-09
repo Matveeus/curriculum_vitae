@@ -10,7 +10,7 @@ interface SearchProps {
 export default function Search({ onSearchInputChange }: SearchProps) {
   return (
     <TextField
-      sx={{ mt: 2, mb: 2, maxWidth: '320px' }}
+      sx={{ maxWidth: '320px' }}
       fullWidth
       id="standard-bare"
       variant="outlined"

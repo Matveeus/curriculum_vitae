@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GET_PROJECTS } from '../../apollo/operations';
 import { useQuery } from '@apollo/client';
 import InitialTable from './InitialTable';
@@ -10,6 +10,8 @@ import type { Project } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
 import type { Column } from './InitialTable';
 import InfoBar from '../InfoBar';
+import roles from '../../constants/roles';
+import ProjectCreationForm from '../forms/Projects/ProjectCreationForm';
 
 interface Data {
   id: string;
@@ -25,7 +27,17 @@ interface Data {
 export default function ProjectsTable() {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
+  const isAdmin = currentUser?.role === roles.ADMIN;
   const { loading, error, data } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   if (loading) return <Loader />;
 
@@ -58,14 +70,15 @@ export default function ProjectsTable() {
       {
         text: 'Delete project',
         onClick: () => console.log('deleted'),
-        disabled: currentUser?.role !== 'admin',
+        disabled: !isAdmin,
       },
     ],
   }));
 
   return (
     <>
-      <InitialTable columns={columns} rows={rows} />
+      <InitialTable columns={columns} rows={rows} openModal={handleOpenModal} allowedToCreate={isAdmin} />
+      <ProjectCreationForm showModal={showModal} handleCloseModal={handleCloseModal} />
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );

@@ -1,16 +1,20 @@
 import React, { useMemo } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Avatar from '@mui/material/Avatar';
 import { Search, MoreMenu } from '../';
 import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
+import {
+  Box,
+  Avatar,
+  TableSortLabel,
+  TableRow,
+  TableHead,
+  TableContainer,
+  TableCell,
+  TableBody,
+  Table,
+  Paper,
+  Button,
+} from '@mui/material';
 
 export interface Column {
   id: string;
@@ -28,11 +32,13 @@ export interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
+  openModal?: () => void;
+  allowedToCreate?: boolean;
 }
 
 export type Order = 'asc' | 'desc';
 
-export default function InitialTable({ columns, rows }: InitialTableProps) {
+export default function InitialTable({ columns, rows, openModal, allowedToCreate }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('');
   const [searchInput, setSearchInput] = React.useState('');
@@ -57,7 +63,14 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
 
   return (
     <>
-      <Search onSearchInputChange={handleSearchInputChange} />
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Search onSearchInputChange={handleSearchInputChange} />
+        {allowedToCreate ? (
+          <Button variant="outlined" onClick={openModal}>
+            Create new
+          </Button>
+        ) : null}
+      </Box>
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: '70vh' }}>
           <Table stickyHeader aria-label="sticky table">
