@@ -75,18 +75,8 @@ export default function ProfileUpdateForm({ readOnly }: FormProps) {
         },
       },
     });
-    const result = data.updateUser;
-    const { first_name, last_name, full_name } = result.profile;
-    dispatch(
-      updateUser({
-        id: result.id,
-        changes: {
-          profile: { ...user.profile, first_name, last_name, full_name },
-          department: { id: result.department?.id } as Department,
-          position: { id: result.position?.id } as Position,
-        },
-      }),
-    );
+    const changes = data.updateUser;
+    dispatch(updateUser({ id: user.id, changes }));
   };
 
   const TextInput = useCallback(
