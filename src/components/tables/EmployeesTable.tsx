@@ -33,7 +33,7 @@ export default function EmployeesTable({ users }: EmployeesTableProps) {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const [mutate, { error }] = useMutation(DELETE_USER);
+  const [mutate, { error, data }] = useMutation(DELETE_USER);
 
   const handleUserDeletion = async (id: string) => {
     await mutate({ variables: { id } });
@@ -76,6 +76,7 @@ export default function EmployeesTable({ users }: EmployeesTableProps) {
     <>
       <InitialTable columns={columns} rows={rows} />
       {error ? <InfoBar text={error.message} status="error" /> : null}
+      {data ? <InfoBar text="User deleted successfully" status="success" /> : null}
     </>
   );
 }
