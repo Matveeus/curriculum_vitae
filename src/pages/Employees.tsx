@@ -4,7 +4,7 @@ import { GET_USERS } from '../apollo/operations';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { useTypedDispatch } from '../hooks/useTypedDispatch';
 import { usersSelectors, setUsers } from '../store/usersSlice';
-import { BreadcrumbsNav, EmployeesTable, Loader, ErrorBar } from '../components';
+import { BreadcrumbsNav, EmployeesTable, Loader, InfoBar } from '../components';
 import type { User } from '../apollo/types';
 
 interface QueryResult {
@@ -36,7 +36,7 @@ export default function Employees() {
     <>
       <BreadcrumbsNav paths={[{ text: 'Employees' }]} />
       <EmployeesTable users={users} />
-      {error && !dataExist ? <ErrorBar error={error.message} /> : null}
+      {error && !dataExist ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
 }
