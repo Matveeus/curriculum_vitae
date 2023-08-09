@@ -2,17 +2,15 @@ import React, { useMemo } from 'react';
 import { MoreMenu } from '../';
 import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
-import {
-  Avatar,
-  TableSortLabel,
-  TableRow,
-  TableHead,
-  TableContainer,
-  TableCell,
-  TableBody,
-  Table,
-  Paper,
-} from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
+import TableContainer from '@mui/material/TableContainer';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
 
 export interface Column {
   id: string;
