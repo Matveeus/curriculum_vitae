@@ -122,44 +122,45 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
 
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Box
-          sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Grid container columnSpacing={3} rowSpacing={6}>
-            <Grid item xs={12} md={6}>
-              <TextInput name="name" isRequired={true} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextInput name="internalName" isRequired={false} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextInput name="domain" isRequired={true} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <NumberInput name="teamSize" />
-            </Grid>
+      <Box
+        sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Grid container columnSpacing={3} rowSpacing={6}>
+          <Grid item xs={12} md={6}>
+            <TextInput name="name" isRequired={true} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextInput name="internalName" isRequired={false} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextInput name="domain" isRequired={true} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <NumberInput name="teamSize" />
+          </Grid>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Grid item xs={12} md={6}>
               <DateInput name="startDate" />
             </Grid>
             <Grid item xs={12} md={6}>
               <DateInput name="endDate" />
             </Grid>
-            <Grid item xs={12} md={12}>
-              <TextInput name="description" isRequired={true} rows={3} />
-            </Grid>
-            {isAdmin && (
-              <Grid item xs={12} md={6} ml="auto">
-                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                  Update
-                </Button>
-              </Grid>
-            )}
+          </LocalizationProvider>
+          <Grid item xs={12} md={12}>
+            <TextInput name="description" isRequired={true} rows={3} />
           </Grid>
-        </Box>
-      </LocalizationProvider>
+          {isAdmin && (
+            <Grid item xs={12} md={6} ml="auto">
+              <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+                Update
+              </Button>
+            </Grid>
+          )}
+        </Grid>
+      </Box>
+
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data !== undefined ? <InfoBar text="Project updated successfully" status="success" /> : null}
     </>

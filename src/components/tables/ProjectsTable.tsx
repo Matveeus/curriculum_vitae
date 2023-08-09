@@ -13,7 +13,7 @@ import InfoBar from '../InfoBar';
 import roles from '../../constants/roles';
 import ProjectCreationForm from '../forms/Projects/ProjectCreationForm';
 import Search from '../Search';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Modal } from '@mui/material';
 
 interface Data {
   id: string;
@@ -93,7 +93,11 @@ export default function ProjectsTable() {
         ) : null}
       </Box>
       <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
-      <ProjectCreationForm showModal={showModal} handleCloseModal={handleCloseModal} />
+      <Modal open={showModal} onClose={handleCloseModal}>
+        <Box>
+          <ProjectCreationForm handleCloseModal={handleCloseModal} />
+        </Box>
+      </Modal>
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );

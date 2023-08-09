@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -7,7 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { Box, Modal } from '@mui/material';
+import { Box } from '@mui/material';
 import { CREATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
 import InfoBar from '../../InfoBar';
@@ -15,13 +15,12 @@ import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from '.
 import dayjs from 'dayjs';
 
 interface ProjectFormProps {
-  showModal: boolean;
   handleCloseModal: () => void;
 }
 
-export default function ProjectCreationForm({ showModal, handleCloseModal }: ProjectFormProps) {
+export default function ProjectCreationForm({ handleCloseModal }: ProjectFormProps) {
   const [createProject, { loading, error, data }] = useMutation(CREATE_PROJECT);
-  const [initialStartDate] = useState(dayjs());
+  const initialStartDate = useMemo(() => dayjs(), []);
 
   const initialValues: InputValues = {
     name: '',
@@ -119,58 +118,57 @@ export default function ProjectCreationForm({ showModal, handleCloseModal }: Pro
 
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Modal open={showModal} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              maxWidth: 720,
-              position: 'absolute',
-              top: '50%',
-              right: '50%',
-              transform: 'translate(50%,-50%)',
-              background: '#ffffff',
-              padding: '30px',
-              borderRadius: '5px',
-            }}
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <Grid container columnSpacing={3} rowSpacing={6}>
-              <Grid item xs={12} md={6}>
-                <TextInput name="name" isRequired={true} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextInput name="internalName" isRequired={false} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextInput name="domain" isRequired={true} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <NumberInput name="teamSize" />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <DateInput name="startDate" />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <DateInput name="endDate" />
-              </Grid>
-              <Grid item xs={12} md={12}>
-                <TextInput name="description" isRequired={true} rows={3} />
-              </Grid>
-              <Grid item xs={12} md={3} ml="auto">
-                <Button onClick={handleCloseModal} fullWidth>
-                  Cancel
-                </Button>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                  Create
-                </Button>
-              </Grid>
+      <Box
+        sx={{
+          maxWidth: 720,
+          position: 'absolute',
+          top: '50%',
+          right: '50%',
+          transform: 'translate(50%,-50%)',
+          background: '#ffffff',
+          padding: '30px',
+          borderRadius: '5px',
+        }}
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        onReset={handleCloseModal}
+      >
+        <Grid container columnSpacing={3} rowSpacing={6}>
+          <Grid item xs={12} md={6}>
+            <TextInput name="name" isRequired={true} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextInput name="internalName" isRequired={false} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextInput name="domain" isRequired={true} />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <NumberInput name="teamSize" />
+          </Grid>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Grid item xs={12} md={6}>
+              <DateInput name="startDate" />
             </Grid>
-          </Box>
-        </Modal>
-      </LocalizationProvider>
+            <Grid item xs={12} md={6}>
+              <DateInput name="endDate" />
+            </Grid>
+          </LocalizationProvider>
+          <Grid item xs={12} md={12}>
+            <TextInput name="description" isRequired={true} rows={3} />
+          </Grid>
+          <Grid item xs={12} md={3} ml="auto">
+            <Button type="reset" fullWidth>
+              Cancel
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+              Create
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data !== undefined ? <InfoBar text="Project added successfully" status="success" /> : null}
     </>
