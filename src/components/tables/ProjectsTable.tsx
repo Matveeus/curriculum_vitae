@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GET_PROJECTS } from '../../apollo/operations';
 import { useQuery } from '@apollo/client';
 import InitialTable from './InitialTable';
@@ -10,6 +10,12 @@ import type { Project } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
 import type { Column } from './InitialTable';
 import InfoBar from '../InfoBar';
+import roles from '../../constants/roles';
+import ProjectCreationForm from '../forms/Projects/ProjectCreationForm';
+import Search from '../Search';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
 
 interface Data {
   id: string;
@@ -25,9 +31,22 @@ interface Data {
 export default function ProjectsTable() {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
+  const isAdmin = currentUser?.role === roles.ADMIN;
   const { loading, error, data } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
+  const [showModal, setShowModal] = useState(false);
+  const [searchInput, setSearchInput] = React.useState('');
 
-  if (loading) return <Loader />;
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value.toLowerCase());
+  };
 
   const projects = data?.projects || [];
 
@@ -58,14 +77,29 @@ export default function ProjectsTable() {
       {
         text: 'Delete project',
         onClick: () => console.log('deleted'),
-        disabled: currentUser?.role !== 'admin',
+        disabled: !isAdmin,
       },
     ],
   }));
 
+  if (loading) return <Loader />;
+
   return (
     <>
-      <InitialTable columns={columns} rows={rows} />
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Search onSearchInputChange={handleSearchInputChange} />
+        {isAdmin ? (
+          <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={handleOpenModal}>
+            Create project
+          </Button>
+        ) : null}
+      </Box>
+      <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
+      <Modal open={showModal} onClose={handleCloseModal}>
+        <Box>
+          <ProjectCreationForm handleCloseModal={handleCloseModal} />
+        </Box>
+      </Modal>
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );

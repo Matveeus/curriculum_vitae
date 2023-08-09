@@ -1,16 +1,16 @@
 import React, { useMemo } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Avatar from '@mui/material/Avatar';
-import { Search, MoreMenu } from '../';
+import { MoreMenu } from '../';
 import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
+import Avatar from '@mui/material/Avatar';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
+import TableContainer from '@mui/material/TableContainer';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
 
 export interface Column {
   id: string;
@@ -28,14 +28,14 @@ export interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
+  filterBy?: string;
 }
 
 export type Order = 'asc' | 'desc';
 
-export default function InitialTable({ columns, rows }: InitialTableProps) {
+export default function InitialTable({ columns, rows, filterBy = '' }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('');
-  const [searchInput, setSearchInput] = React.useState('');
 
   const handleRequestSort = (property: string) => {
     const columnToSort = columns.find(column => column.id === property);
@@ -47,17 +47,12 @@ export default function InitialTable({ columns, rows }: InitialTableProps) {
     }
   };
 
-  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(event.target.value.toLowerCase());
-  };
-
   const sortedRows = useMemo(() => sortRows(rows, orderBy, order, columns), [order, orderBy, rows, columns]);
 
-  const filteredRows = useMemo(() => filterRows(sortedRows, searchInput, columns), [searchInput, sortedRows, columns]);
+  const filteredRows = useMemo(() => filterRows(sortedRows, filterBy, columns), [filterBy, sortedRows, columns]);
 
   return (
     <>
-      <Search onSearchInputChange={handleSearchInputChange} />
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: '70vh' }}>
           <Table stickyHeader aria-label="sticky table">

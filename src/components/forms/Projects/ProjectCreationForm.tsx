@@ -1,46 +1,41 @@
-import React, { useCallback } from 'react';
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
+import React, { useCallback, useMemo } from 'react';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import startCase from 'lodash/startCase';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import dayjs from 'dayjs';
-import roles from '../../../constants/roles';
-import { UPDATE_PROJECT } from '../../../apollo/operations';
+import { Box } from '@mui/material';
+import { CREATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
 import InfoBar from '../../InfoBar';
 import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from './ProjectFormInterfaces';
-import { Project } from '../../../apollo/types';
+import dayjs from 'dayjs';
 
 interface ProjectFormProps {
-  project: Project;
+  handleCloseModal: () => void;
 }
 
-export default function ProjectDetailsForm({ project }: ProjectFormProps) {
-  const [updateProject, { loading, error, data }] = useMutation(UPDATE_PROJECT);
-  const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const isAdmin = currentUser?.role === roles.ADMIN;
+export default function ProjectCreationForm({ handleCloseModal }: ProjectFormProps) {
+  const [createProject, { loading, error, data }] = useMutation(CREATE_PROJECT);
+  const initialStartDate = useMemo(() => dayjs(), []);
 
   const initialValues: InputValues = {
-    name: project.name ?? '',
-    internalName: project.internal_name ?? '',
-    description: project.description ?? '',
-    domain: project.domain ?? '',
-    teamSize: project.team_size ?? 0,
-    startDate: project.start_date ? dayjs(project.start_date) : null,
-    endDate: project.end_date ? dayjs(project.end_date) : null,
+    name: '',
+    internalName: '',
+    description: '',
+    domain: '',
+    teamSize: 1,
+    startDate: initialStartDate,
+    endDate: null,
   };
 
   const {
     register,
     control,
     handleSubmit,
-    getValues,
     formState: { isDirty, errors },
   } = useForm<InputValues>({
     values: initialValues,
@@ -49,9 +44,8 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
   const onSubmit: SubmitHandler<InputValues> = async values => {
     const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
     try {
-      await updateProject({
+      await createProject({
         variables: {
-          id: project.id,
           project: {
             name: name,
             internal_name: internalName,
@@ -64,6 +58,7 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
           },
         },
       });
+      handleCloseModal();
     } catch (error) {
       console.error(error);
     }
@@ -77,7 +72,6 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
         {...register(name, {
           ...(isRequired ? { required: `${startCase(name)} is required` } : {}),
         })}
-        inputProps={{ readOnly: !isAdmin }}
         fullWidth
         multiline={rows !== undefined}
         rows={rows !== undefined ? rows : 1}
@@ -97,7 +91,7 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
         {...register(name, {
           required: `${startCase(name)} is required`,
         })}
-        inputProps={{ readOnly: !isAdmin, min: 1 }}
+        inputProps={{ min: 1 }}
         fullWidth
       />
     ),
@@ -112,9 +106,8 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
         render={({ field }) => (
           <DatePicker
             label={startCase(name)}
-            readOnly={!isAdmin}
             slotProps={{ textField: { fullWidth: true } }}
-            value={getValues(name)}
+            value={field.value}
             onChange={date => field.onChange(date)}
           />
         )}
@@ -126,9 +119,19 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
   return (
     <>
       <Box
-        sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
+        sx={{
+          maxWidth: 720,
+          position: 'absolute',
+          top: '50%',
+          right: '50%',
+          transform: 'translate(50%,-50%)',
+          background: '#ffffff',
+          padding: '30px',
+          borderRadius: '5px',
+        }}
         component="form"
         onSubmit={handleSubmit(onSubmit)}
+        onReset={handleCloseModal}
       >
         <Grid container columnSpacing={3} rowSpacing={6}>
           <Grid item xs={12} md={6}>
@@ -154,18 +157,20 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
           <Grid item xs={12} md={12}>
             <TextInput name="description" isRequired={true} rows={3} />
           </Grid>
-          {isAdmin && (
-            <Grid item xs={12} md={6} ml="auto">
-              <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                Update
-              </Button>
-            </Grid>
-          )}
+          <Grid item xs={12} md={3} ml="auto">
+            <Button type="reset" fullWidth>
+              Cancel
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+              Create
+            </Button>
+          </Grid>
         </Grid>
       </Box>
-
       {error ? <InfoBar text={error.message} status="error" /> : null}
-      {data !== undefined ? <InfoBar text="Project updated successfully" status="success" /> : null}
+      {data !== undefined ? <InfoBar text="Project added successfully" status="success" /> : null}
     </>
   );
 }
