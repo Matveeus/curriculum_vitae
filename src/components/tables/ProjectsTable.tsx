@@ -12,6 +12,8 @@ import type { Column } from './InitialTable';
 import InfoBar from '../InfoBar';
 import roles from '../../constants/roles';
 import ProjectCreationForm from '../forms/Projects/ProjectCreationForm';
+import Search from '../Search';
+import { Box, Button } from '@mui/material';
 
 interface Data {
   id: string;
@@ -30,6 +32,7 @@ export default function ProjectsTable() {
   const isAdmin = currentUser?.role === roles.ADMIN;
   const { loading, error, data } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
   const [showModal, setShowModal] = useState(false);
+  const [searchInput, setSearchInput] = React.useState('');
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -39,7 +42,9 @@ export default function ProjectsTable() {
     setShowModal(false);
   };
 
-  if (loading) return <Loader />;
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value.toLowerCase());
+  };
 
   const projects = data?.projects || [];
 
@@ -75,9 +80,19 @@ export default function ProjectsTable() {
     ],
   }));
 
+  if (loading) return <Loader />;
+
   return (
     <>
-      <InitialTable columns={columns} rows={rows} openModal={handleOpenModal} allowedToCreate={isAdmin} />
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Search onSearchInputChange={handleSearchInputChange} />
+        {isAdmin ? (
+          <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={handleOpenModal}>
+            Create project
+          </Button>
+        ) : null}
+      </Box>
+      <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
       <ProjectCreationForm showModal={showModal} handleCloseModal={handleCloseModal} />
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>

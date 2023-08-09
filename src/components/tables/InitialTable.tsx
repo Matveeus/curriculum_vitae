@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import { Search, MoreMenu } from '../';
+import { MoreMenu } from '../';
 import { sortRows, filterRows } from '../../utils';
 import type { MenuItemData } from '../MoreMenu';
 import {
-  Box,
   Avatar,
   TableSortLabel,
   TableRow,
@@ -13,7 +12,6 @@ import {
   TableBody,
   Table,
   Paper,
-  Button,
 } from '@mui/material';
 
 export interface Column {
@@ -32,16 +30,14 @@ export interface Row {
 interface InitialTableProps {
   columns: Column[];
   rows: Row[];
-  openModal?: () => void;
-  allowedToCreate?: boolean;
+  filterBy?: string;
 }
 
 export type Order = 'asc' | 'desc';
 
-export default function InitialTable({ columns, rows, openModal, allowedToCreate }: InitialTableProps) {
+export default function InitialTable({ columns, rows, filterBy = '' }: InitialTableProps) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('');
-  const [searchInput, setSearchInput] = React.useState('');
 
   const handleRequestSort = (property: string) => {
     const columnToSort = columns.find(column => column.id === property);
@@ -53,24 +49,12 @@ export default function InitialTable({ columns, rows, openModal, allowedToCreate
     }
   };
 
-  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(event.target.value.toLowerCase());
-  };
-
   const sortedRows = useMemo(() => sortRows(rows, orderBy, order, columns), [order, orderBy, rows, columns]);
 
-  const filteredRows = useMemo(() => filterRows(sortedRows, searchInput, columns), [searchInput, sortedRows, columns]);
+  const filteredRows = useMemo(() => filterRows(sortedRows, filterBy, columns), [filterBy, sortedRows, columns]);
 
   return (
     <>
-      <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-        <Search onSearchInputChange={handleSearchInputChange} />
-        {allowedToCreate ? (
-          <Button variant="outlined" onClick={openModal}>
-            Create new
-          </Button>
-        ) : null}
-      </Box>
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: '70vh' }}>
           <Table stickyHeader aria-label="sticky table">
