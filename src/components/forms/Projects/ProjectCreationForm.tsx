@@ -1,39 +1,33 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import startCase from 'lodash/startCase';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { Box } from '@mui/material';
-import dayjs from 'dayjs';
-import roles from '../../../constants/roles';
-import { UPDATE_PROJECT } from '../../../apollo/operations';
+import { Box, Modal } from '@mui/material';
+import { CREATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
 import InfoBar from '../../InfoBar';
 import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from './ProjectFormInterfaces';
-import { Project } from '../../../apollo/types';
 
 interface ProjectFormProps {
-  project: Project;
+  isAdmin: boolean;
 }
 
-export default function ProjectDetailsForm({ project }: ProjectFormProps) {
-  const [updateProject, { loading, error, data }] = useMutation(UPDATE_PROJECT);
-  const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const isAdmin = currentUser?.role === roles.ADMIN;
+export default function ProjectCreationForm({ isAdmin }: ProjectFormProps) {
+  const [createProject, { loading, error, data }] = useMutation(CREATE_PROJECT);
 
   const initialValues: InputValues = {
-    name: project.name ?? '',
-    internalName: project.internal_name ?? '',
-    description: project.description ?? '',
-    domain: project.domain ?? '',
-    teamSize: project.team_size ?? 0,
-    startDate: project.start_date ? dayjs(project.start_date) : null,
-    endDate: project.end_date ? dayjs(project.end_date) : null,
+    name: '',
+    internalName: '',
+    description: '',
+    domain: '',
+    teamSize: 1,
+    startDate: null,
+    endDate: null,
   };
 
   const {
@@ -49,9 +43,8 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
   const onSubmit: SubmitHandler<InputValues> = async values => {
     const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
     try {
-      await updateProject({
+      await createProject({
         variables: {
-          id: project.id,
           project: {
             name: name,
             internal_name: internalName,
@@ -123,46 +116,60 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
     [],
   );
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Box
-          sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Grid container columnSpacing={3} rowSpacing={6}>
-            <Grid item xs={12} md={6}>
-              <TextInput name="name" isRequired={true} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextInput name="internalName" isRequired={false} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextInput name="domain" isRequired={true} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <NumberInput name="teamSize" />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <DateInput name="startDate" />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <DateInput name="endDate" />
-            </Grid>
-            <Grid item xs={12} md={12}>
-              <TextInput name="description" isRequired={true} rows={3} />
-            </Grid>
-            {isAdmin && (
-              <Grid item xs={12} md={6} ml="auto">
-                <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                  Update
-                </Button>
+      <button onClick={handleOpenModal}>Open Modal</button>
+      <Modal open={showModal} onClose={handleCloseModal}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Box
+            sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Grid container columnSpacing={3} rowSpacing={6}>
+              <Grid item xs={12} md={6}>
+                <TextInput name="name" isRequired={true} />
               </Grid>
-            )}
-          </Grid>
-        </Box>
-      </LocalizationProvider>
+              <Grid item xs={12} md={6}>
+                <TextInput name="internalName" isRequired={false} />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextInput name="domain" isRequired={true} />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <NumberInput name="teamSize" />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <DateInput name="startDate" />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <DateInput name="endDate" />
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <TextInput name="description" isRequired={true} rows={3} />
+              </Grid>
+              {isAdmin && (
+                <Grid item xs={12} md={6} ml="auto">
+                  <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+                    Create
+                  </Button>
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+        </LocalizationProvider>
+      </Modal>
+
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data !== undefined ? <InfoBar text="Project updated successfully" status="success" /> : null}
     </>

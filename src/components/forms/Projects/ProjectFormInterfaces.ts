@@ -1,9 +1,4 @@
 import { Dayjs } from 'dayjs';
-import type { Project } from '../../../apollo/types';
-
-export interface ProjectFormProps {
-  project: Project;
-}
 
 export interface InputValues {
   name: string;
