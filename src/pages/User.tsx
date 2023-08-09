@@ -3,9 +3,7 @@ import { Outlet, useLocation, useParams } from 'react-router-dom';
 import last from 'lodash/last';
 import capitalize from 'lodash/capitalize';
 import { useQuery } from '@apollo/client';
-import { GET_SELECT_LISTS } from '../apollo/operations';
-import { useTypedSelector } from '../hooks/useTypedSelector';
-import { usersSelectors } from '../store/usersSlice';
+import { GET_USER, GET_SELECT_LISTS } from '../apollo/operations';
 import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -20,16 +18,18 @@ interface QueryResult {
 
 export default function User() {
   const { id } = useParams();
-  const user = useTypedSelector(state => usersSelectors.selectById(state, id as string))!;
-  const { loading, error, data } = useQuery<QueryResult>(GET_SELECT_LISTS);
+  const userQuery = useQuery(GET_USER, { variables: { id } });
+  const listsQuery = useQuery(GET_SELECT_LISTS);
   const { pathname } = useLocation();
+
+  const loading = userQuery.loading || listsQuery.loading;
 
   if (loading) {
     return <Loader />;
   }
 
-  const departments = data?.departments ?? [];
-  const positions = data?.positions ?? [];
+  const { user } = userQuery.data;
+  const { departments, positions } = listsQuery.data;
   const currentTab = last(pathname.split('/'));
 
   return (
