@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
+import type { Column } from './InitialTable';
 import InitialTable from './InitialTable';
+import { DELETE_PROJECT } from '../../apollo/operations';
+import { deleteProject } from '../../store/projectsSlice';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
-import type { MenuItemData } from '../MoreMenu';
-import type { Column } from './InitialTable';
+import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import roles from '../../constants/roles';
 import ProjectCreationForm from '../forms/Projects/ProjectCreationForm';
 import Search from '../Search';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import { Project } from '../../apollo/types';
+import type { MenuItemData } from '../MoreMenu';
+import type { Project } from '../../apollo/types';
+import { useMutation } from '@apollo/client';
+import InfoBar from '../InfoBar';
 
 interface Data {
   id: string;
@@ -30,8 +35,10 @@ interface ProjectsTableProps {
 
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
+  const [mutate, { error, data }] = useMutation(DELETE_PROJECT);
   const [showModal, setShowModal] = useState(false);
   const [searchInput, setSearchInput] = React.useState('');
 
@@ -45,6 +52,11 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value.toLowerCase());
+  };
+
+  const handleProjectDeletion = async (id: string) => {
+    await mutate({ variables: { id } });
+    dispatch(deleteProject(id));
   };
 
   const columns: Column[] = [
@@ -73,7 +85,7 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
       },
       {
         text: 'Delete project',
-        onClick: () => console.log('deleted'),
+        onClick: () => handleProjectDeletion(project.id),
         disabled: !isAdmin,
       },
     ],
@@ -95,6 +107,8 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
           <ProjectCreationForm handleCloseModal={handleCloseModal} />
         </Box>
       </Modal>
+      {error ? <InfoBar text={error.message} status="error" /> : null}
+      {data ? <InfoBar text="Project deleted successfully" status="success" /> : null}
     </>
   );
 }
