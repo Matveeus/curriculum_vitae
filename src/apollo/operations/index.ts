@@ -1,7 +1,7 @@
 import { SIGN_UP, LOG_IN } from './auth';
 import { GET_USERS, UPDATE_USER, DELETE_USER } from './employees';
 import { GET_SELECT_LISTS } from './selectLists';
-import { GET_PROJECTS, GET_PROJECT, UPDATE_PROJECT, CREATE_PROJECT } from './projects';
+import { GET_PROJECTS, GET_PROJECT, UPDATE_PROJECT, CREATE_PROJECT, DELETE_PROJECT } from './projects';
 import { GET_CVS } from './cvs';
 
 export {
@@ -14,6 +14,7 @@ export {
   GET_PROJECTS,
   UPDATE_PROJECT,
   CREATE_PROJECT,
+  DELETE_PROJECT,
   GET_PROJECT,
   GET_CVS,
 };
