@@ -163,9 +163,8 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
           )}
         </Grid>
       </Box>
-
       {error ? <InfoBar text={error.message} status="error" /> : null}
-      {data !== undefined ? <InfoBar text="Project updated successfully" status="success" /> : null}
+      {data ? <InfoBar text="Project updated successfully" status="success" /> : null}
     </>
   );
 }
