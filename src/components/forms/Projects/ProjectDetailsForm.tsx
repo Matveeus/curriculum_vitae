@@ -67,7 +67,20 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
           },
         },
       });
-      dispatch(updateProject({ id: project.id, changes: values }));
+      dispatch(
+        updateProject({
+          id: project.id,
+          changes: {
+            name: name,
+            internal_name: internalName,
+            description: description,
+            domain: domain,
+            team_size: Number(teamSize),
+            start_date: startDate ? startDate.format('YYYY-MM-DD') : '',
+            end_date: endDate ? endDate.format('YYYY-MM-DD') : '',
+          },
+        }),
+      );
     } catch (error) {
       console.error(error);
     }
