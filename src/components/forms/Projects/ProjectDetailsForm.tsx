@@ -16,13 +16,16 @@ import { useMutation } from '@apollo/client';
 import InfoBar from '../../InfoBar';
 import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from './ProjectFormInterfaces';
 import { Project } from '../../../apollo/types';
+import { useTypedDispatch } from '../../../hooks/useTypedDispatch';
+import { updateProject } from '../../../store/projectsSlice';
 
 interface ProjectFormProps {
   project: Project;
 }
 
 export default function ProjectDetailsForm({ project }: ProjectFormProps) {
-  const [updateProject, { loading, error, data }] = useMutation(UPDATE_PROJECT);
+  const dispatch = useTypedDispatch();
+  const [updateProjectData, { loading, error, data }] = useMutation(UPDATE_PROJECT);
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
 
@@ -49,7 +52,7 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
   const onSubmit: SubmitHandler<InputValues> = async values => {
     const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
     try {
-      await updateProject({
+      await updateProjectData({
         variables: {
           id: project.id,
           project: {
@@ -64,6 +67,20 @@ export default function ProjectDetailsForm({ project }: ProjectFormProps) {
           },
         },
       });
+      dispatch(
+        updateProject({
+          id: project.id,
+          changes: {
+            name: name,
+            internal_name: internalName,
+            description: description,
+            domain: domain,
+            team_size: Number(teamSize),
+            start_date: startDate ? startDate.format('YYYY-MM-DD') : '',
+            end_date: endDate ? endDate.format('YYYY-MM-DD') : '',
+          },
+        }),
+      );
     } catch (error) {
       console.error(error);
     }

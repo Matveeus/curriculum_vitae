@@ -5,6 +5,7 @@ const PROJECT_DATA = gql`
     id
     name
     internal_name
+    description
     start_date
     end_date
     domain
@@ -26,7 +27,6 @@ export const GET_PROJECT = gql`
   query GetProject($id: ID!) {
     project(id: $id) {
       ...ProjectData
-      description
     }
   }
 `;
