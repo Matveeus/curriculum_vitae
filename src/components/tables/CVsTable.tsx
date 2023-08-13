@@ -1,15 +1,15 @@
-import React from 'react';
-import { GET_CVS } from '../../apollo/operations';
-import { useQuery } from '@apollo/client';
+import React, { useState } from 'react';
 import InitialTable from './InitialTable';
-import { Loader } from '../';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import type { Cv } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
 import type { Column } from './InitialTable';
-import InfoBar from '../InfoBar';
+import Search from '../Search';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
 
 interface Data {
   id: string;
@@ -20,14 +20,27 @@ interface Data {
   menuItems?: MenuItemData[];
 }
 
-export default function CVsTable() {
+interface CVsTableProps {
+  cvs: Cv[];
+}
+
+export default function CVsTable({ cvs }: CVsTableProps) {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const { loading, error, data } = useQuery<{ cvs: Cv[] }>(GET_CVS);
+  const [showModal, setShowModal] = useState(false);
+  const [searchInput, setSearchInput] = React.useState('');
 
-  if (loading) return <Loader />;
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
 
-  const cvs = data?.cvs || [];
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value.toLowerCase());
+  };
 
   const columns: Column[] = [
     { id: 'name', label: 'Name', align: 'center', searchable: true, sortable: true },
@@ -59,8 +72,17 @@ export default function CVsTable() {
 
   return (
     <>
-      <InitialTable columns={columns} rows={rows} />
-      {error ? <InfoBar text={error.message} status="error" /> : null}
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Search onSearchInputChange={handleSearchInputChange} />
+        <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={handleOpenModal}>
+          Create cv
+        </Button>
+      </Box>
+      <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
+      <Modal open={showModal} onClose={handleCloseModal}>
+        <Box>CV FORM</Box>
+      </Modal>
+      {/*{error ? <InfoBar text={error.message} status="error" /> : null}*/}
     </>
   );
 }
