@@ -11,6 +11,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import roles from '../../constants/roles';
+import { useMutation } from '@apollo/client';
+import { DELETE_CV } from '../../apollo/operations';
+import InfoBar from '../InfoBar';
 
 interface Data {
   id: string;
@@ -29,6 +32,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
+  const [mutate, { error, data }] = useMutation(DELETE_CV);
   const [showModal, setShowModal] = useState(false);
   const [searchInput, setSearchInput] = React.useState('');
 
@@ -42,6 +46,10 @@ export default function CVsTable({ cvs }: CVsTableProps) {
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value.toLowerCase());
+  };
+
+  const handleCVDeletion = async (id: string) => {
+    await mutate({ variables: { id } });
   };
 
   const columns: Column[] = [
@@ -66,7 +74,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       },
       {
         text: 'Delete CV',
-        onClick: () => console.log('deleted'),
+        onClick: () => handleCVDeletion(cv.id),
         disabled: !(isAdmin || cv.user?.email === currentUser?.email),
       },
     ],
@@ -84,7 +92,8 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       <Modal open={showModal} onClose={handleCloseModal}>
         <Box>CV FORM</Box>
       </Modal>
-      {/*{error ? <InfoBar text={error.message} status="error" /> : null}*/}
+      {error ? <InfoBar text={error.message} status="error" /> : null}
+      {data ? <InfoBar text="CV deleted successfully" status="success" /> : null}
     </>
   );
 }
