@@ -10,6 +10,7 @@ import Search from '../Search';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import roles from '../../constants/roles';
 
 interface Data {
   id: string;
@@ -27,6 +28,7 @@ interface CVsTableProps {
 export default function CVsTable({ cvs }: CVsTableProps) {
   const navigate = useNavigate();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
+  const isAdmin = currentUser?.role === roles.ADMIN;
   const [showModal, setShowModal] = useState(false);
   const [searchInput, setSearchInput] = React.useState('');
 
@@ -52,7 +54,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
 
   const rows: Data[] = cvs.map(cv => ({
     id: cv.id ?? '',
-    name: cv.name || '',
+    name: cv.name ?? '',
     description: cv.description ?? '',
     email: cv.user?.email ?? '',
     projects: cv.projects?.map(project => project.name) ?? [],
@@ -65,7 +67,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       {
         text: 'Delete CV',
         onClick: () => console.log('deleted'),
-        disabled: currentUser?.role !== 'admin',
+        disabled: !(isAdmin || cv.user?.email === currentUser?.email),
       },
     ],
   }));
