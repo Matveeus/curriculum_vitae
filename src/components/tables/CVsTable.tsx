@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import type { Column } from './InitialTable';
 import InitialTable from './InitialTable';
 import routes from '../../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import type { Cv } from '../../apollo/types';
 import type { MenuItemData } from '../MoreMenu';
-import type { Column } from './InitialTable';
 import Search from '../Search';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -75,7 +75,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       {
         text: 'Delete CV',
         onClick: () => handleCVDeletion(cv.id),
-        disabled: !(isAdmin || cv.user?.email === currentUser?.email),
+        disabled: !(isAdmin || cv.user?.id === currentUser?.id),
       },
     ],
   }));

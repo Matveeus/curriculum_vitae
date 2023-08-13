@@ -6,6 +6,7 @@ const CV_DATA = gql`
     name
     description
     user {
+      id
       email
     }
     projects {
