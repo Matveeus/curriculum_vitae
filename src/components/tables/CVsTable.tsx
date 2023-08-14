@@ -14,6 +14,8 @@ import roles from '../../constants/roles';
 import { useMutation } from '@apollo/client';
 import { DELETE_CV } from '../../apollo/operations';
 import InfoBar from '../InfoBar';
+import { useTypedDispatch } from '../../hooks/useTypedDispatch';
+import { deleteCv } from '../../store/cvsSlice';
 
 interface Data {
   id: string;
@@ -30,6 +32,7 @@ interface CVsTableProps {
 
 export default function CVsTable({ cvs }: CVsTableProps) {
   const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
   const [mutate, { error, data }] = useMutation(DELETE_CV);
@@ -50,6 +53,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
 
   const handleCVDeletion = async (id: string) => {
     await mutate({ variables: { id } });
+    dispatch(deleteCv(id));
   };
 
   const columns: Column[] = [

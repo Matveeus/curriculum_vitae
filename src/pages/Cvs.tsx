@@ -4,16 +4,28 @@ import { useLazyQuery } from '@apollo/client';
 import { Cv } from '../apollo/types';
 import { GET_CVS } from '../apollo/operations';
 import InfoBar from '../components/InfoBar';
+import { useTypedDispatch } from '../hooks/useTypedDispatch';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { cvsSelectors, setCvs } from '../store/cvsSlice';
 
 export default function Cvs() {
+  const dispatch = useTypedDispatch();
+  const cvs = useTypedSelector(cvsSelectors.selectAll);
   const [getCVs, { loading, error, data }] = useLazyQuery<{ cvs: Cv[] }>(GET_CVS);
-  const cvs = data?.cvs || [];
 
   useEffect(() => {
     getCVs();
   }, []);
 
-  if (loading) {
+  useEffect(() => {
+    if (data) {
+      dispatch(setCvs(data.cvs));
+    }
+  }, [data]);
+
+  const dataExist = cvs.length > 0;
+
+  if (loading && !dataExist) {
     return <Loader />;
   }
 
@@ -21,7 +33,7 @@ export default function Cvs() {
     <>
       <BreadcrumbsNav paths={[{ text: 'CVs' }]} />
       <CVsTable cvs={cvs} />
-      {error ? <InfoBar text={error.message} status="error" /> : null}
+      {error && !dataExist ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
 }
