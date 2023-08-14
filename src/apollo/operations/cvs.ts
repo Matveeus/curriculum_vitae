@@ -6,6 +6,7 @@ const CV_DATA = gql`
     name
     description
     user {
+      id
       email
     }
     projects {
@@ -20,6 +21,14 @@ export const GET_CVS = gql`
   query GetCvs {
     cvs {
       ...CVData
+    }
+  }
+`;
+
+export const DELETE_CV = gql`
+  mutation DeleteCv($id: ID!) {
+    deleteCv(id: $id) {
+      affected
     }
   }
 `;
