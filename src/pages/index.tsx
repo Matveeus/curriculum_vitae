@@ -10,6 +10,7 @@ import Fetch from './Fetch';
 import Employees from './Employees';
 import Projects from './Projects';
 import Cvs from './Cvs';
+import CvDetails from './CvDetailes';
 import Departments from './Departments';
 import Positions from './Positions';
 import Skills from './Skills';
@@ -41,6 +42,7 @@ export function Router() {
               <Route path="projects" element={<Projects />} />
               <Route path="projects/:id" element={<ProjectDetails />} />
               <Route path="cvs" element={<Cvs />} />
+              <Route path="cvs/:id/details" element={<CvDetails />} />
               <Route path="departments" element={<Departments />} />
               <Route path="positions" element={<Positions />} />
               <Route path="skills" element={<Skills />} />
