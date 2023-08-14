@@ -13,12 +13,24 @@ const CV_DATA = gql`
       id
       name
     }
+    skills {
+      skill_name
+    }
   }
 `;
 
 export const GET_CVS = gql`
   ${CV_DATA}
   query GetCvs {
+    cvs {
+      ...CVData
+    }
+  }
+`;
+
+export const GET_CV = gql`
+  ${CV_DATA}
+  query GetCv {
     cvs {
       ...CVData
     }
