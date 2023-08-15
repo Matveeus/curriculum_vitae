@@ -9,12 +9,12 @@ const usersSlice = createSlice({
   initialState: usersAdapter.getInitialState(),
   reducers: {
     setUsers: usersAdapter.setAll,
-    createUser: usersAdapter.addOne,
+    addUser: usersAdapter.addOne,
     updateUser: usersAdapter.updateOne,
     deleteUser: usersAdapter.removeOne,
   },
 });
 
 export const usersSelectors = usersAdapter.getSelectors<State>(state => state.users);
-export const { setUsers, createUser, updateUser, deleteUser } = usersSlice.actions;
+export const { setUsers, addUser, updateUser, deleteUser } = usersSlice.actions;
 export default usersSlice.reducer;

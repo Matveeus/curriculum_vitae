@@ -1,35 +1,56 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
 import last from 'lodash/last';
 import capitalize from 'lodash/capitalize';
 import { useQuery } from '@apollo/client';
-import { GET_SELECT_LISTS } from '../apollo/operations';
+import { GET_USER, GET_SELECT_LISTS } from '../apollo/operations';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { usersSelectors } from '../store/usersSlice';
+import { useTypedDispatch } from '../hooks/useTypedDispatch';
+import { addUser } from '../store/usersSlice';
 import routes from '../constants/routes';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { InfoBar, Loader, LinkTab, BreadcrumbsNav } from '../components';
-import type { Department, Position } from '../apollo/types';
+import type { User, Department, Position } from '../apollo/types';
 
-interface QueryResult {
+interface UserQueryResult {
+  user: User;
+}
+
+interface ListsQueryResult {
   departments: Department[];
   positions: Position[];
 }
 
 export default function User() {
   const { id } = useParams();
-  const user = useTypedSelector(state => usersSelectors.selectById(state, id as string))!;
-  const { loading, error, data } = useQuery<QueryResult>(GET_SELECT_LISTS);
+  const storedUser = useTypedSelector(state => usersSelectors.selectById(state, id as string));
+  const listsQuery = useQuery<ListsQueryResult>(GET_SELECT_LISTS);
+  const userQuery = useQuery<UserQueryResult>(GET_USER, {
+    variables: { id },
+    skip: !!storedUser,
+  });
   const { pathname } = useLocation();
+  const dispatch = useTypedDispatch();
+
+  useEffect(() => {
+    if (userQuery.data) {
+      dispatch(addUser(userQuery.data.user));
+    }
+  }, [userQuery.data]);
+
+  const loading = userQuery.loading || listsQuery.loading;
+  const error = userQuery.error || listsQuery.error;
 
   if (loading) {
     return <Loader />;
   }
 
-  const departments = data?.departments ?? [];
-  const positions = data?.positions ?? [];
+  const user = (storedUser || userQuery.data?.user) as User;
+  const departments = listsQuery.data?.departments ?? [];
+  const positions = listsQuery.data?.positions ?? [];
   const currentTab = last(pathname.split('/'));
 
   return (

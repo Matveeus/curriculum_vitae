@@ -6,7 +6,6 @@ import Home from './Home';
 import Login from './Login';
 import Register from './Register';
 import Private from './Private';
-import Fetch from './Fetch';
 import Employees from './Employees';
 import Projects from './Projects';
 import Cvs from './Cvs';
@@ -28,24 +27,22 @@ export function Router() {
           <Route path="register" element={<Register />} />
 
           <Route element={<Private />}>
-            <Route element={<Fetch />}>
-              <Route path="employees" element={<Employees />} />
+            <Route path="employees" element={<Employees />} />
 
-              <Route path="employees/:id" element={<User />}>
-                <Route path="profile" element={<UserProfile />} />
-                <Route path="skills" element={<p>Skills</p>} />
-                <Route path="languages" element={<p>Languages</p>} />
-                <Route path="cvs" element={<p>CVs</p>} />
-              </Route>
-
-              <Route path="projects" element={<Projects />} />
-              <Route path="projects/:id" element={<ProjectDetails />} />
-              <Route path="cvs" element={<Cvs />} />
-              <Route path="departments" element={<Departments />} />
-              <Route path="positions" element={<Positions />} />
-              <Route path="skills" element={<Skills />} />
-              <Route path="languages" element={<Languages />} />
+            <Route path="employees/:id" element={<User />}>
+              <Route path="profile" element={<UserProfile />} />
+              <Route path="skills" element={<p>Skills</p>} />
+              <Route path="languages" element={<p>Languages</p>} />
+              <Route path="cvs" element={<p>CVs</p>} />
             </Route>
+
+            <Route path="projects" element={<Projects />} />
+            <Route path="projects/:id" element={<ProjectDetails />} />
+            <Route path="cvs" element={<Cvs />} />
+            <Route path="departments" element={<Departments />} />
+            <Route path="positions" element={<Positions />} />
+            <Route path="skills" element={<Skills />} />
+            <Route path="languages" element={<Languages />} />
           </Route>
         </Route>
       </Routes>
