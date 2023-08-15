@@ -46,14 +46,16 @@ export default function BreadcrumbsNav({ paths }: BreadcrumbsNavProps) {
       {paths.map(({ text, color, route, icon }, index) => {
         const linkInner = icon ? [icon, text] : text;
 
-        return route ? (
-          <NavLink route={route} color={color || 'inherit'} key={index}>
-            {linkInner}
-          </NavLink>
-        ) : (
-          <Typography color="text.primary" key={index}>
-            {linkInner}
-          </Typography>
+        return (
+          <React.Fragment key={index}>
+            {route ? (
+              <NavLink route={route} color={color || 'inherit'}>
+                {linkInner}
+              </NavLink>
+            ) : (
+              <Typography color="text.primary">{linkInner}</Typography>
+            )}
+          </React.Fragment>
         );
       })}
     </Breadcrumbs>
