@@ -11,6 +11,7 @@ import ProjectsTable from './tables/ProjectsTable';
 import CVsTable from './tables/CVsTable';
 import ProfileUpdateForm from './profile/ProfileUpdateForm';
 import AvatarUploadForm from './profile/AvatarUploadForm';
+import UserForm from './forms/Employees/UserForm';
 
 export {
   Search,
@@ -26,4 +27,5 @@ export {
   CVsTable,
   ProfileUpdateForm,
   AvatarUploadForm,
+  UserForm,
 };
