@@ -16,7 +16,9 @@ export default function ProjectDetails() {
   const { id } = useParams();
   const storedCv = useTypedSelector(state => cvsSelectors.selectById(state, id as string));
   const { data, error, loading } = useQuery(GET_CV, { variables: { id }, skip: !!storedCv });
+  console.log(data?.cv);
   const cv = storedCv || data?.cv;
+  console.log(cv);
 
   useEffect(() => {
     if (data) {

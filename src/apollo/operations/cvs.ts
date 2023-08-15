@@ -15,6 +15,11 @@ const CV_DATA = gql`
     }
     skills {
       skill_name
+      mastery
+    }
+    languages {
+      language_name
+      proficiency
     }
   }
 `;
@@ -30,8 +35,8 @@ export const GET_CVS = gql`
 
 export const GET_CV = gql`
   ${CV_DATA}
-  query GetCv {
-    cvs {
+  query GetCv($id: ID!) {
+    cv(id: $id) {
       ...CVData
     }
   }
