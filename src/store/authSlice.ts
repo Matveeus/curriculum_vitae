@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { modifyUser } from './usersSlice';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { Thunk } from '.';
 import type { User } from '../apollo/types';
@@ -26,6 +27,15 @@ const authSlice = createSlice({
     setCurrentUser: (state, action: PayloadAction<Auth['currentUser']>) => {
       state.currentUser = action.payload;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(modifyUser, (state, action) => {
+      const currentUser = state.currentUser!;
+      const { id, changes } = action.payload;
+      if (id === currentUser.id) {
+        state.currentUser = { ...currentUser, ...changes };
+      }
+    });
   },
 });
 
