@@ -3,6 +3,7 @@ import { GET_USERS, GET_USER, CREATE_USER, UPDATE_USER, DELETE_USER } from './em
 import { GET_SELECT_LISTS } from './selectLists';
 import { GET_PROJECTS, GET_PROJECT, UPDATE_PROJECT, CREATE_PROJECT, DELETE_PROJECT } from './projects';
 import { GET_CVS, DELETE_CV } from './cvs';
+import { UPLOAD_AVATAR, DELETE_AVATAR } from './avatar';
 
 export {
   SIGN_UP,
@@ -20,4 +21,6 @@ export {
   GET_PROJECT,
   GET_CVS,
   DELETE_CV,
+  UPLOAD_AVATAR,
+  DELETE_AVATAR,
 };
