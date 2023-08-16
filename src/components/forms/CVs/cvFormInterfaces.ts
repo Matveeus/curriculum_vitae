@@ -1,9 +1,7 @@
+import { LanguageProficiency } from '../../../apollo/types';
+
 export interface InputValues {
   name: string;
   description: string;
-}
-
-export interface TextInputProps {
-  name: 'name' | 'description';
-  rows?: number;
+  languages: LanguageProficiency[];
 }
