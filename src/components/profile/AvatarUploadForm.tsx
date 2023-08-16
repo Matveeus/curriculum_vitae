@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { UPLOAD_AVATAR } from '../../apollo/operations';
+import { UPLOAD_AVATAR, DELETE_AVATAR } from '../../apollo/operations';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { updateUser } from '../../store/usersSlice';
 import { getUserNameAbbreviation } from '../../utils';
@@ -10,6 +10,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
+import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress';
 import UploadIcon from '@mui/icons-material/FileUploadOutlined';
 import { InfoBar } from '../';
@@ -27,12 +30,18 @@ const AVATAR_MAX_SIZE = 500_000;
 
 export default function AvatarUploadForm({ visible }: AvatarUploadFormProps) {
   const { user } = useOutletContext<OutletContext>();
-  const [upload, { loading, error }] = useMutation(UPLOAD_AVATAR);
+  const [upload, avatarUpload] = useMutation(UPLOAD_AVATAR);
+  const [mutate, avatarDeletion] = useMutation(DELETE_AVATAR);
+  const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useTypedDispatch();
 
+  const error = avatarUpload.error || avatarDeletion.error;
+
+  const avatarExists = !!user.profile.avatar;
+
   const handleAvatarClick = () => {
-    if (!user.profile.avatar) {
+    if (!avatarExists) {
       inputRef.current?.click();
     }
   };
@@ -70,19 +79,43 @@ export default function AvatarUploadForm({ visible }: AvatarUploadFormProps) {
     fileReader.readAsDataURL(avatar);
   };
 
+  const handleAvatarDeletion = async () => {
+    await mutate({
+      variables: { id: user.profile.id },
+    });
+    dispatch(
+      updateUser({
+        id: user.id,
+        changes: {
+          profile: { ...user.profile, avatar: null },
+        },
+      }),
+    );
+    formRef.current?.reset();
+  };
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-      <Avatar
-        sx={{ width: 120, height: 120, fontSize: 40 }}
-        src={user.profile.avatar!}
-        alt={user.profile.full_name || user.email}
-        onClick={handleAvatarClick}
+      <Badge
+        badgeContent={
+          <IconButton onClick={handleAvatarDeletion}>
+            <CloseIcon />
+          </IconButton>
+        }
+        invisible={!avatarExists}
       >
-        {loading ? <CircularProgress color="inherit" /> : getUserNameAbbreviation(user)}
-      </Avatar>
+        <Avatar
+          sx={{ width: 120, height: 120, fontSize: 40 }}
+          src={user.profile.avatar!}
+          alt={user.profile.full_name || user.email}
+          onClick={handleAvatarClick}
+        >
+          {avatarUpload.loading ? <CircularProgress color="inherit" /> : getUserNameAbbreviation(user)}
+        </Avatar>
+      </Badge>
 
       {visible && (
-        <Box sx={{ m: 'auto' }} component="form">
+        <Box sx={{ m: 'auto' }} component="form" ref={formRef}>
           <InputLabel sx={{ cursor: 'pointer' }} htmlFor="avatar-upload">
             <Typography
               sx={{
