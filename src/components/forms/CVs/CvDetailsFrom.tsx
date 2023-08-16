@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Cv, Language } from '../../../apollo/types';
+import type { Cv, Language, Skill } from '../../../apollo/types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -19,17 +19,21 @@ interface CvFormProps {
 
 interface QueryResult {
   languages: Language[];
+  skills: Skill[];
 }
 
 export default function CvDetailsForm({ cv }: CvFormProps) {
   const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
   const allLanguages = data?.languages ?? [];
-  const proficiencies = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2', 'native'];
+  const allSkills = data?.skills ?? [];
+  const proficienciesList = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2', 'native'];
+  const masteryList = ['novice', 'advanced', 'competent', 'proficient', 'expert'];
 
   const initialValues = {
     name: cv.name ?? '',
     description: cv.description ?? '',
     languages: cv.languages ?? [],
+    skills: cv.skills ?? [],
   };
 
   const {
@@ -47,7 +51,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
           name={`languages.${index}.language_name`}
           control={control}
           render={({ field }) => (
-            <TextField sx={{ width: '75%' }} select label="Language" fullWidth {...field}>
+            <TextField sx={{ width: '70%' }} select label="Language" fullWidth {...field}>
               {allLanguages.map(({ id, name }) => (
                 <MenuItem value={name} key={id}>
                   {name}
@@ -60,10 +64,43 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
           name={`languages.${index}.proficiency`}
           control={control}
           render={({ field }) => (
-            <TextField sx={{ width: '20%' }} select label="Proficiency" fullWidth {...field}>
-              {proficiencies.map(proficiency => (
+            <TextField sx={{ width: '27%' }} select label="Proficiency" fullWidth {...field}>
+              {proficienciesList.map(proficiency => (
                 <MenuItem value={proficiency} key={proficiency}>
                   {proficiency}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+      </Box>
+    ));
+  };
+
+  const renderSkillFields = () => {
+    return initialValues.languages.map((language, index) => (
+      <Box key={language.language_name} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
+        <Controller
+          name={`skills.${index}.skill_name`}
+          control={control}
+          render={({ field }) => (
+            <TextField sx={{ width: '70%' }} select label="Skill" fullWidth {...field}>
+              {allSkills.map(({ id, name }) => (
+                <MenuItem value={name} key={id}>
+                  {name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+        <Controller
+          name={`skills.${index}.mastery`}
+          control={control}
+          render={({ field }) => (
+            <TextField sx={{ width: '27%' }} select label="Mastery" fullWidth {...field}>
+              {masteryList.map(mastery => (
+                <MenuItem value={mastery} key={mastery}>
+                  {mastery}
                 </MenuItem>
               ))}
             </TextField>
@@ -110,6 +147,11 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Languages</Typography>
           {renderLanguageFields()}
+        </Box>
+        <Divider orientation="vertical" flexItem />
+        <Box sx={{ width: '32%' }}>
+          <Typography variant="h6">Skills</Typography>
+          {renderSkillFields()}
         </Box>
       </Box>
       {error ? <InfoBar text={error.message} status="error" /> : null}
