@@ -16,6 +16,8 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useTypedDispatch } from '../../../hooks/useTypedDispatch';
 import { updateCv } from '../../../store/cvsSlice';
 import { masteryList, proficienciesList } from '../../../constants/cvConsts';
+import roles from '../../../constants/roles';
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
 
 interface CvFormProps {
   cv: Cv;
@@ -32,6 +34,8 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
   const allLanguages = data?.languages ?? [];
   const allSkills = data?.skills ?? [];
+  const currentUser = useTypedSelector(state => state.auth.currentUser);
+  const isAdmin = currentUser?.role === roles.ADMIN;
 
   const cvWithoutTypename = {
     ...cv,
@@ -93,9 +97,11 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const renderLanguageFields = () => {
     return languageFields.map((language, index) => (
       <Box key={language.id} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
-        <Button onClick={() => handleRemoveLanguage(index)} variant="outlined">
-          <DeleteForeverIcon />
-        </Button>
+        {(isAdmin || cv.user?.id === currentUser?.id) && (
+          <Button onClick={() => handleRemoveLanguage(index)} variant="outlined">
+            <DeleteForeverIcon />
+          </Button>
+        )}
         <Controller
           name={`languages.${index}.language_name`}
           control={control}
@@ -106,6 +112,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               sx={{ width: '55%' }}
               select
               label="Language"
+              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
               fullWidth
               {...field}
               error={!!errors.languages?.[index]?.language_name}
@@ -129,6 +136,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               sx={{ width: '23%' }}
               select
               label="Proficiency"
+              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
               fullWidth
               {...field}
               error={!!errors.languages?.[index]?.proficiency}
@@ -149,9 +157,11 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const renderSkillFields = () => {
     return skillFields.map((skill, index) => (
       <Box key={skill.id} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
-        <Button onClick={() => handleRemoveSkill(index)} variant="outlined">
-          <DeleteForeverIcon />
-        </Button>
+        {(isAdmin || cv.user?.id === currentUser?.id) && (
+          <Button onClick={() => handleRemoveSkill(index)} variant="outlined">
+            <DeleteForeverIcon />
+          </Button>
+        )}
         <Controller
           name={`skills.${index}.skill_name`}
           control={control}
@@ -163,6 +173,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               select
               label="Skill"
               fullWidth
+              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
               {...field}
               error={!!errors.skills?.[index]?.skill_name}
               helperText={errors.skills?.[index]?.skill_name?.message}
@@ -186,6 +197,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               select
               label="Mastery"
               fullWidth
+              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
               {...field}
               error={!!errors.skills?.[index]?.mastery}
               helperText={errors.skills?.[index]?.mastery?.message}
@@ -250,34 +262,56 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
           <Controller
             name="name"
             control={control}
-            render={({ field }) => <TextField sx={{ mt: 3 }} label="Name" fullWidth {...field} />}
+            render={({ field }) => (
+              <TextField
+                sx={{ mt: 3 }}
+                label="Name"
+                fullWidth
+                {...field}
+                inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+              />
+            )}
           />
           <Controller
             name="description"
             control={control}
             render={({ field }) => (
-              <TextField sx={{ mt: 3 }} label="Description" fullWidth multiline rows={3} {...field} />
+              <TextField
+                sx={{ mt: 3 }}
+                label="Description"
+                fullWidth
+                multiline
+                rows={3}
+                {...field}
+                inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+              />
             )}
           />
-          <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-            Update
-          </Button>
+          {(isAdmin || cv.user?.id === currentUser?.id) && (
+            <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+              Update
+            </Button>
+          )}
         </Box>
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Languages</Typography>
           {renderLanguageFields()}
-          <Button variant="outlined" onClick={handleAddLanguage} fullWidth sx={{ mt: 3 }}>
-            Add Language
-          </Button>
+          {(isAdmin || cv.user?.id === currentUser?.id) && (
+            <Button variant="outlined" onClick={handleAddLanguage} fullWidth sx={{ mt: 3 }}>
+              Add Language
+            </Button>
+          )}
         </Box>
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Skills</Typography>
           {renderSkillFields()}
-          <Button variant="outlined" onClick={handleAddSkill} fullWidth sx={{ mt: 3 }}>
-            Add Skill
-          </Button>
+          {(isAdmin || cv.user?.id === currentUser?.id) && (
+            <Button variant="outlined" onClick={handleAddSkill} fullWidth sx={{ mt: 3 }}>
+              Add Skill
+            </Button>
+          )}
         </Box>
       </Box>
       {error ? <InfoBar text={error.message} status="error" /> : null}
