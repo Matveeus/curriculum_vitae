@@ -2,7 +2,7 @@ import React from 'react';
 import type { Cv, Language, Skill } from '../../../apollo/types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Controller, SubmitHandler, useForm, useFieldArray } from 'react-hook-form';
+import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_CV_LISTS, UPDATE_CV } from '../../../apollo/operations';
@@ -13,6 +13,9 @@ import Typography from '@mui/material/Typography';
 import InfoBar from '../../InfoBar';
 import Divider from '@mui/material/Divider';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useTypedDispatch } from '../../../hooks/useTypedDispatch';
+import { updateCv } from '../../../store/cvsSlice';
+import { masteryList, proficienciesList } from '../../../constants/cvConsts';
 
 interface CvFormProps {
   cv: Cv;
@@ -24,12 +27,11 @@ interface QueryResult {
 }
 
 export default function CvDetailsForm({ cv }: CvFormProps) {
+  const dispatch = useTypedDispatch();
   const [updateCvData, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
   const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
   const allLanguages = data?.languages ?? [];
   const allSkills = data?.skills ?? [];
-  const proficienciesList = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2', 'native'];
-  const masteryList = ['novice', 'advanced', 'competent', 'proficient', 'expert'];
 
   const cvWithoutTypename = {
     ...cv,
@@ -216,6 +218,17 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
           },
         },
       });
+      dispatch(
+        updateCv({
+          id: cv.id,
+          changes: {
+            name: name,
+            description: description,
+            skills: skills,
+            languages: languages,
+          },
+        }),
+      );
     } catch (error) {
       console.error(error);
     }
