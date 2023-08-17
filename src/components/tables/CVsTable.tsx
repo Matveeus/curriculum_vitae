@@ -16,6 +16,7 @@ import InfoBar from '../InfoBar';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { deleteCv } from '../../store/cvsSlice';
 import Dialog from '@mui/material/Dialog';
+import CvCreationFrom from '../forms/CVs/CvCreationForm';
 
 interface Data {
   id: string;
@@ -94,7 +95,9 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       </Box>
       <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
       <Dialog fullScreen open={showModal} onClose={handleCloseModal}>
-        <Box></Box>
+        <Box>
+          <CvCreationFrom handleCloseModal={handleCloseModal} />
+        </Box>
       </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data ? <InfoBar text="CV deleted successfully" status="success" /> : null}

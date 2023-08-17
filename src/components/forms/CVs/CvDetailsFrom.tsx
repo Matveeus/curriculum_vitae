@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Cv, Language, Skill } from '../../../apollo/types';
+import type { Cv } from '../../../apollo/types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { GET_CV_LISTS, UPDATE_CV } from '../../../apollo/operations';
 import { Loader } from '../../index';
 import MenuItem from '@mui/material/MenuItem';
-import { InputValues } from './cvFormInterfaces';
+import { InputValues, QueryResult } from './cvFormInterfaces';
 import Typography from '@mui/material/Typography';
 import InfoBar from '../../InfoBar';
 import Divider from '@mui/material/Divider';
@@ -21,11 +21,6 @@ import { useTypedSelector } from '../../../hooks/useTypedSelector';
 
 interface CvFormProps {
   cv: Cv;
-}
-
-interface QueryResult {
-  languages: Language[];
-  skills: Skill[];
 }
 
 export default function CvDetailsForm({ cv }: CvFormProps) {
