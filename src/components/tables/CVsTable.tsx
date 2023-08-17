@@ -9,13 +9,13 @@ import type { MenuItemData } from '../MoreMenu';
 import Search from '../Search';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
 import roles from '../../constants/roles';
 import { useMutation } from '@apollo/client';
 import { DELETE_CV } from '../../apollo/operations';
 import InfoBar from '../InfoBar';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { deleteCv } from '../../store/cvsSlice';
+import Dialog from '@mui/material/Dialog';
 
 interface Data {
   id: string;
@@ -93,9 +93,9 @@ export default function CVsTable({ cvs }: CVsTableProps) {
         </Button>
       </Box>
       <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
-      <Modal open={showModal} onClose={handleCloseModal}>
-        <Box>CV FORM</Box>
-      </Modal>
+      <Dialog fullScreen open={showModal} onClose={handleCloseModal}>
+        <Box></Box>
+      </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data ? <InfoBar text="CV deleted successfully" status="success" /> : null}
     </>
