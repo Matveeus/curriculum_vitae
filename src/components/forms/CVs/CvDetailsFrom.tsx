@@ -36,6 +36,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const allSkills = data?.skills ?? [];
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
+  const isOwner = cv.user?.id === currentUser?.id;
 
   const initialValues = {
     name: cv.name ?? '',
@@ -89,7 +90,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const renderLanguageFields = () => {
     return languageFields.map((language, index) => (
       <Box key={language.id} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
-        {(isAdmin || cv.user?.id === currentUser?.id) && (
+        {(isAdmin || isOwner) && (
           <Button onClick={() => handleRemoveLanguage(index)} variant="outlined">
             <DeleteForeverIcon />
           </Button>
@@ -104,7 +105,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               sx={{ width: '55%' }}
               select
               label="Language"
-              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+              inputProps={{ readOnly: !(isAdmin || isOwner) }}
               fullWidth
               {...field}
               error={!!errors.languages?.[index]?.language_name}
@@ -128,7 +129,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               sx={{ width: '23%' }}
               select
               label="Proficiency"
-              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+              inputProps={{ readOnly: !(isAdmin || isOwner) }}
               fullWidth
               {...field}
               error={!!errors.languages?.[index]?.proficiency}
@@ -149,7 +150,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const renderSkillFields = () => {
     return skillFields.map((skill, index) => (
       <Box key={skill.id} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
-        {(isAdmin || cv.user?.id === currentUser?.id) && (
+        {(isAdmin || isOwner) && (
           <Button onClick={() => handleRemoveSkill(index)} variant="outlined">
             <DeleteForeverIcon />
           </Button>
@@ -165,7 +166,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               select
               label="Skill"
               fullWidth
-              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+              inputProps={{ readOnly: !(isAdmin || isOwner) }}
               {...field}
               error={!!errors.skills?.[index]?.skill_name}
               helperText={errors.skills?.[index]?.skill_name?.message}
@@ -189,7 +190,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               select
               label="Mastery"
               fullWidth
-              inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+              inputProps={{ readOnly: !(isAdmin || isOwner) }}
               {...field}
               error={!!errors.skills?.[index]?.mastery}
               helperText={errors.skills?.[index]?.mastery?.message}
@@ -260,7 +261,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
                 label="Name"
                 fullWidth
                 {...field}
-                inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+                inputProps={{ readOnly: !(isAdmin || isOwner) }}
               />
             )}
           />
@@ -275,11 +276,11 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
                 multiline
                 rows={3}
                 {...field}
-                inputProps={{ readOnly: !(isAdmin || cv.user?.id === currentUser?.id) }}
+                inputProps={{ readOnly: !(isAdmin || isOwner) }}
               />
             )}
           />
-          {(isAdmin || cv.user?.id === currentUser?.id) && (
+          {(isAdmin || isOwner) && (
             <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
               Update
             </Button>
@@ -289,7 +290,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Languages</Typography>
           {cv.languages ? renderLanguageFields() : null}
-          {(isAdmin || cv.user?.id === currentUser?.id) && (
+          {(isAdmin || isOwner) && (
             <Button variant="outlined" onClick={handleAddLanguage} fullWidth sx={{ mt: 3 }}>
               Add Language
             </Button>
@@ -299,7 +300,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Skills</Typography>
           {cv.skills ? renderSkillFields() : null}
-          {(isAdmin || cv.user?.id === currentUser?.id) && (
+          {(isAdmin || isOwner) && (
             <Button variant="outlined" onClick={handleAddSkill} fullWidth sx={{ mt: 3 }}>
               Add Skill
             </Button>
