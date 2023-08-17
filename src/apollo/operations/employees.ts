@@ -2,6 +2,10 @@ import { gql } from '@apollo/client';
 
 const USER_DATA = gql`
   fragment UserData on User {
+    id
+    created_at
+    email
+    role
     department_name
     position_name
     department {
@@ -9,6 +13,10 @@ const USER_DATA = gql`
     }
     position {
       id
+    }
+    cvs {
+      id
+      name
     }
   }
 `;
@@ -37,14 +45,32 @@ export const GET_USERS = gql`
   query GetUsers {
     users {
       ...UserData
-      id
-      created_at
-      email
-      role
-      cvs {
-        id
-        name
+      profile {
+        ...ProfileData
       }
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  ${USER_DATA}
+  ${PROFILE_DATA}
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      ...UserData
+      profile {
+        ...ProfileData
+      }
+    }
+  }
+`;
+
+export const CREATE_USER = gql`
+  ${USER_DATA}
+  ${PROFILE_DATA}
+  mutation CreateUser($user: CreateUserInput!) {
+    createUser(user: $user) {
+      ...UserData
       profile {
         ...ProfileData
       }
@@ -53,11 +79,18 @@ export const GET_USERS = gql`
 `;
 
 export const UPDATE_USER = gql`
-  ${USER_DATA}
   ${PROFILE_DATA}
   mutation UpdateUser($id: ID!, $user: UpdateUserInput!) {
     updateUser(id: $id, user: $user) {
-      ...UserData
+      id
+      department_name
+      position_name
+      department {
+        id
+      }
+      position {
+        id
+      }
       profile {
         ...ProfileData
       }

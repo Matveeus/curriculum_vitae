@@ -1,11 +1,9 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useTypedSelector } from '../hooks/useTypedSelector';
-import { getUserNameAbbreviation } from '../utils';
 import roles from '../constants/roles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import { AvatarUploadForm, ProfileUpdateForm } from '../components';
 import type { User } from '../apollo/types';
 
@@ -25,17 +23,7 @@ export default function UserProfile() {
 
   return (
     <Box sx={{ maxWidth: 720, m: 'auto' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-        <Avatar
-          sx={{ width: 120, height: 120, fontSize: 40 }}
-          src={user.profile.avatar!}
-          alt={user.profile.full_name || user.email}
-        >
-          {getUserNameAbbreviation(user)}
-        </Avatar>
-
-        {hasWritePermission && <AvatarUploadForm />}
-      </Box>
+      <AvatarUploadForm visible={hasWritePermission} />
 
       <Box sx={{ mb: 8 }}>
         {user.profile.full_name && (

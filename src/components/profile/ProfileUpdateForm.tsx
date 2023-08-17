@@ -75,8 +75,8 @@ export default function ProfileUpdateForm({ readOnly }: FormProps) {
         },
       },
     });
-    const changes = data.updateUser;
-    dispatch(updateUser({ id: user.id, changes }));
+    const { id, ...changes } = data.updateUser;
+    dispatch(updateUser({ id, changes }));
   };
 
   const TextInput = useCallback(
