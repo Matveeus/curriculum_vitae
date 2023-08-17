@@ -1,8 +1,8 @@
-import { LanguageProficiency, SkillMastery } from '../../../apollo/types';
+import { LanguageProficiencyInput, SkillMasteryInput } from '../../../apollo/types';
 
 export interface InputValues {
   name: string;
   description: string;
-  languages: LanguageProficiency[];
-  skills: SkillMastery[];
+  languages: LanguageProficiencyInput[];
+  skills: SkillMasteryInput[];
 }

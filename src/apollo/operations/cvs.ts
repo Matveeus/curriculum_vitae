@@ -42,6 +42,14 @@ export const GET_CV = gql`
   }
 `;
 
+export const UPDATE_CV = gql`
+  mutation updateCv($id: ID!, $cv: CvInput!) {
+    updateCv(id: $id, cv: $cv) {
+      id
+    }
+  }
+`;
+
 export const DELETE_CV = gql`
   mutation DeleteCv($id: ID!) {
     deleteCv(id: $id) {

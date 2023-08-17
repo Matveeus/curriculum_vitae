@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Controller, SubmitHandler, useForm, useFieldArray } from 'react-hook-form';
 import Button from '@mui/material/Button';
-import { useQuery } from '@apollo/client';
-import { GET_CV_LISTS } from '../../../apollo/operations';
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_CV_LISTS, UPDATE_CV } from '../../../apollo/operations';
 import { Loader } from '../../index';
 import MenuItem from '@mui/material/MenuItem';
 import { InputValues } from './cvFormInterfaces';
@@ -24,17 +24,26 @@ interface QueryResult {
 }
 
 export default function CvDetailsForm({ cv }: CvFormProps) {
+  const [updateCvData, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
   const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
   const allLanguages = data?.languages ?? [];
   const allSkills = data?.skills ?? [];
   const proficienciesList = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2', 'native'];
   const masteryList = ['novice', 'advanced', 'competent', 'proficient', 'expert'];
 
+  const cvWithoutTypename = {
+    ...cv,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    languages: cv.languages?.map(({ __typename, ...rest }) => rest) ?? [],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    skills: cv.skills?.map(({ __typename, ...rest }) => rest) ?? [],
+  };
+
   const initialValues = {
-    name: cv.name ?? '',
-    description: cv.description ?? '',
-    languages: cv.languages ?? [],
-    skills: cv.skills ?? [],
+    name: cvWithoutTypename.name ?? '',
+    description: cvWithoutTypename.description ?? '',
+    languages: cvWithoutTypename.languages ?? [],
+    skills: cvWithoutTypename.skills ?? [],
   };
 
   const {
@@ -192,10 +201,27 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   };
 
   const onSubmit: SubmitHandler<InputValues> = async values => {
-    console.log(values);
+    const { name, description, languages, skills } = values;
+    try {
+      await updateCvData({
+        variables: {
+          id: cv.id,
+          cv: {
+            name: name,
+            description: description,
+            skills: skills,
+            languages: languages,
+            projectsIds: cv.projects?.map(project => project.id) ?? [],
+            is_template: true,
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  if (loading) {
+  if (loading || updateLoading) {
     return <Loader />;
   }
 
@@ -220,7 +246,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
               <TextField sx={{ mt: 3 }} label="Description" fullWidth multiline rows={3} {...field} />
             )}
           />
-          <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty} fullWidth>
+          <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
             Update
           </Button>
         </Box>
@@ -242,6 +268,8 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         </Box>
       </Box>
       {error ? <InfoBar text={error.message} status="error" /> : null}
+      {updateError ? <InfoBar text={updateError.message} status="error" /> : null}
+      {updateData ? <InfoBar text="CV updated successfully" status="success" /> : null}
     </>
   );
 }
