@@ -13,6 +13,14 @@ const CV_DATA = gql`
       id
       name
     }
+    skills {
+      skill_name
+      mastery
+    }
+    languages {
+      language_name
+      proficiency
+    }
   }
 `;
 
@@ -21,6 +29,23 @@ export const GET_CVS = gql`
   query GetCvs {
     cvs {
       ...CVData
+    }
+  }
+`;
+
+export const GET_CV = gql`
+  ${CV_DATA}
+  query GetCv($id: ID!) {
+    cv(id: $id) {
+      ...CVData
+    }
+  }
+`;
+
+export const UPDATE_CV = gql`
+  mutation updateCv($id: ID!, $cv: CvInput!) {
+    updateCv(id: $id, cv: $cv) {
+      id
     }
   }
 `;
