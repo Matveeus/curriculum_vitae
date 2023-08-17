@@ -37,19 +37,11 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
 
-  const cvWithoutTypename = {
-    ...cv,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    languages: cv.languages?.map(({ __typename, ...rest }) => rest) ?? [],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    skills: cv.skills?.map(({ __typename, ...rest }) => rest) ?? [],
-  };
-
   const initialValues = {
-    name: cvWithoutTypename.name ?? '',
-    description: cvWithoutTypename.description ?? '',
-    languages: cvWithoutTypename.languages ?? [],
-    skills: cvWithoutTypename.skills ?? [],
+    name: cv.name ?? '',
+    description: cv.description ?? '',
+    languages: cv.languages ?? [],
+    skills: cv.skills ?? [],
   };
 
   const {
@@ -296,7 +288,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Languages</Typography>
-          {renderLanguageFields()}
+          {cv.languages ? renderLanguageFields() : null}
           {(isAdmin || cv.user?.id === currentUser?.id) && (
             <Button variant="outlined" onClick={handleAddLanguage} fullWidth sx={{ mt: 3 }}>
               Add Language
@@ -306,7 +298,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Skills</Typography>
-          {renderSkillFields()}
+          {cv.skills ? renderSkillFields() : null}
           {(isAdmin || cv.user?.id === currentUser?.id) && (
             <Button variant="outlined" onClick={handleAddSkill} fullWidth sx={{ mt: 3 }}>
               Add Skill
