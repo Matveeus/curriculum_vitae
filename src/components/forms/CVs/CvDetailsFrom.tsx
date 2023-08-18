@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_CV_LISTS, UPDATE_CV } from '../../../apollo/operations';
+import { CREATE_CV, GET_CV_LISTS, UPDATE_CV } from '../../../apollo/operations';
 import { Loader } from '../../index';
 import MenuItem from '@mui/material/MenuItem';
 import { InputValues, QueryResult } from './cvFormInterfaces';
@@ -14,7 +14,7 @@ import InfoBar from '../../InfoBar';
 import Divider from '@mui/material/Divider';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useTypedDispatch } from '../../../hooks/useTypedDispatch';
-import { updateCv } from '../../../store/cvsSlice';
+import { updateCv, addCv } from '../../../store/cvsSlice';
 import { masteryList, proficienciesList } from '../../../constants/cvConsts';
 import roles from '../../../constants/roles';
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
@@ -28,7 +28,8 @@ interface CvFormProps {
 
 export default function CvDetailsForm({ type, cv }: CvFormProps) {
   const dispatch = useTypedDispatch();
-  const [updateCvData, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
+  const [update, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
+  const [create, { loading: addLoading, error: addError, data: addData }] = useMutation(CREATE_CV);
   const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
   const allLanguages = data?.languages ?? [];
   const allSkills = data?.skills ?? [];
@@ -205,10 +206,10 @@ export default function CvDetailsForm({ type, cv }: CvFormProps) {
     ));
   };
 
-  const onSubmit: SubmitHandler<InputValues> = async values => {
+  const onUpdate: SubmitHandler<InputValues> = async values => {
     const { name, description, languages, skills } = values;
     try {
-      await updateCvData({
+      await update({
         variables: {
           id: cv?.id,
           cv: {
@@ -239,7 +240,35 @@ export default function CvDetailsForm({ type, cv }: CvFormProps) {
     }
   };
 
-  if (loading || updateLoading) {
+  const onCreate: SubmitHandler<InputValues> = async values => {
+    const { name, description, languages, skills } = values;
+    try {
+      const { data } = await create({
+        variables: {
+          cv: {
+            name: name,
+            description: description,
+            userId: currentUser?.id,
+            skills: skills,
+            languages: languages,
+            projectsIds: [],
+            is_template: true,
+          },
+        },
+      });
+      const cv = data.createCv;
+      dispatch(addCv(cv));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlers = {
+    create: onCreate,
+    update: onUpdate,
+  };
+
+  if (loading || updateLoading || addLoading) {
     return <Loader />;
   }
 
@@ -248,7 +277,7 @@ export default function CvDetailsForm({ type, cv }: CvFormProps) {
       <Box
         sx={{ display: 'flex', justifyContent: 'space-between', mt: '50px' }}
         component="form"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(handlers[type])}
       >
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">General info</Typography>
@@ -315,7 +344,9 @@ export default function CvDetailsForm({ type, cv }: CvFormProps) {
       </Box>
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {updateError ? <InfoBar text={updateError.message} status="error" /> : null}
+      {addError ? <InfoBar text={addError.message} status="error" /> : null}
       {updateData ? <InfoBar text="CV updated successfully" status="success" /> : null}
+      {addData ? <InfoBar text="CV created successfully" status="success" /> : null}
     </>
   );
 }
