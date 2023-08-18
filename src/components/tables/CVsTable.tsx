@@ -18,8 +18,6 @@ import { deleteCv } from '../../store/cvsSlice';
 import Dialog from '@mui/material/Dialog';
 import CvForm from '../forms/CVs/CvFrom';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
 import type { FormType } from '../forms/CVs/CvFrom';
@@ -60,6 +58,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setCvToUpdate(null);
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,16 +115,13 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       <Dialog fullScreen open={showModal} onClose={handleCloseModal}>
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleCloseModal} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div" textAlign="center">
               {`${formType} cv`}
             </Typography>
           </Toolbar>
         </AppBar>
         <Box sx={{ m: '0 20px' }}>
-          <CvForm type={formType} cv={cvToUpdate} />
+          <CvForm type={formType} cv={cvToUpdate} onReset={handleCloseModal} />
         </Box>
       </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}

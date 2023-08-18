@@ -24,9 +24,10 @@ export type FormType = 'create' | 'update';
 interface CvFormProps {
   cv: Cv | null;
   type: FormType;
+  onReset: () => void;
 }
 
-export default function CvDetailsForm({ type, cv }: CvFormProps) {
+export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
   const dispatch = useTypedDispatch();
   const [update, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
   const [create, { loading: addLoading, error: addError, data: addData }] = useMutation(CREATE_CV);
@@ -278,6 +279,7 @@ export default function CvDetailsForm({ type, cv }: CvFormProps) {
         sx={{ display: 'flex', justifyContent: 'space-between', mt: '50px' }}
         component="form"
         onSubmit={handleSubmit(handlers[type])}
+        onReset={onReset}
       >
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">General info</Typography>
@@ -315,11 +317,12 @@ export default function CvDetailsForm({ type, cv }: CvFormProps) {
               />
             )}
           />
-          {(isAdmin || isOwner) && (
-            <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-              {type}
-            </Button>
-          )}
+          <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
+            {type}
+          </Button>
+          <Button sx={{ mt: 3 }} type="reset" variant="outlined" fullWidth>
+            exit
+          </Button>
         </Box>
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
