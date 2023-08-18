@@ -8,7 +8,7 @@ import { addCv, cvsSelectors } from '../store/cvsSlice';
 import { useQuery } from '@apollo/client';
 import { GET_CV } from '../apollo/operations';
 import InfoBar from '../components/InfoBar';
-import CvDetailsForm from '../components/forms/CVs/CvDetailsFrom';
+import CvDetailsForm from '../components/forms/CVs/CvFrom';
 import ContactIcon from '@mui/icons-material/ContactPageOutlined';
 
 export default function ProjectDetails() {

@@ -16,12 +16,13 @@ import InfoBar from '../InfoBar';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { deleteCv } from '../../store/cvsSlice';
 import Dialog from '@mui/material/Dialog';
-import CvDetailsForm from '../forms/CVs/CvDetailsFrom';
+import CvForm from '../forms/CVs/CvFrom';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
+import type { FormType } from '../forms/CVs/CvFrom';
 
 interface Data {
   id: string;
@@ -43,10 +44,18 @@ export default function CVsTable({ cvs }: CVsTableProps) {
   const isAdmin = currentUser?.role === roles.ADMIN;
   const [mutate, { error, data }] = useMutation(DELETE_CV);
   const [showModal, setShowModal] = useState(false);
+  const [formType, setFormType] = useState<FormType>('update');
+  const [cvToUpdate, setCvToUpdate] = useState<Cv | null>(null);
   const [searchInput, setSearchInput] = React.useState('');
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (type: FormType) => {
     setShowModal(true);
+    setFormType(type);
+  };
+
+  const handleUpdateButtonClick = (cv: Cv) => {
+    setCvToUpdate(cv);
+    handleOpenModal('update');
   };
 
   const handleCloseModal = () => {
@@ -83,6 +92,11 @@ export default function CVsTable({ cvs }: CVsTableProps) {
         disabled: false,
       },
       {
+        text: 'Update CV',
+        onClick: () => handleUpdateButtonClick(cv),
+        disabled: !(isAdmin || cv.user?.id === currentUser?.id),
+      },
+      {
         text: 'Delete CV',
         onClick: () => handleCVDeletion(cv.id),
         disabled: !(isAdmin || cv.user?.id === currentUser?.id),
@@ -94,7 +108,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
     <>
       <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Search onSearchInputChange={handleSearchInputChange} />
-        <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={handleOpenModal}>
+        <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={() => handleOpenModal('create')}>
           Create cv
         </Button>
       </Box>
@@ -106,12 +120,12 @@ export default function CVsTable({ cvs }: CVsTableProps) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Cv creation
+              {`${formType} cv`}
             </Typography>
           </Toolbar>
         </AppBar>
         <Box sx={{ m: '0 20px' }}>
-          <CvDetailsForm type="create" />
+          <CvForm type={formType} cv={cvToUpdate} />
         </Box>
       </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}

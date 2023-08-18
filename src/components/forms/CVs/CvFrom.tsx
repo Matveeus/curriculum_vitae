@@ -19,10 +19,10 @@ import { masteryList, proficienciesList } from '../../../constants/cvConsts';
 import roles from '../../../constants/roles';
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
 
-type FormType = 'create' | 'update';
+export type FormType = 'create' | 'update';
 
 interface CvFormProps {
-  cv?: Cv;
+  cv: Cv | null;
   type: FormType;
 }
 
