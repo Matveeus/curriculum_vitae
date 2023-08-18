@@ -16,7 +16,12 @@ import InfoBar from '../InfoBar';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { deleteCv } from '../../store/cvsSlice';
 import Dialog from '@mui/material/Dialog';
-import CvCreationFrom from '../forms/CVs/CvCreationForm';
+import CvDetailsForm from '../forms/CVs/CvDetailsFrom';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
+import AppBar from '@mui/material/AppBar';
 
 interface Data {
   id: string;
@@ -95,8 +100,18 @@ export default function CVsTable({ cvs }: CVsTableProps) {
       </Box>
       <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
       <Dialog fullScreen open={showModal} onClose={handleCloseModal}>
-        <Box>
-          <CvCreationFrom handleCloseModal={handleCloseModal} />
+        <AppBar sx={{ position: 'relative' }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleCloseModal} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              Cv creation
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Box sx={{ m: '0 20px' }}>
+          <CvDetailsForm type="create" />
         </Box>
       </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}

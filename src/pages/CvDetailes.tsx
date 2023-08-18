@@ -36,7 +36,7 @@ export default function ProjectDetails() {
           { icon: <ContactIcon />, text: cv?.name, route: routes.cv(cv?.id) },
         ]}
       />
-      <CvDetailsForm cv={cv} />
+      <CvDetailsForm cv={cv} type="update" />
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );

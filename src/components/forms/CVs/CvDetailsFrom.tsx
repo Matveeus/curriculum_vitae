@@ -19,11 +19,14 @@ import { masteryList, proficienciesList } from '../../../constants/cvConsts';
 import roles from '../../../constants/roles';
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
 
+type FormType = 'create' | 'update';
+
 interface CvFormProps {
-  cv: Cv;
+  cv?: Cv;
+  type: FormType;
 }
 
-export default function CvDetailsForm({ cv }: CvFormProps) {
+export default function CvDetailsForm({ type, cv }: CvFormProps) {
   const dispatch = useTypedDispatch();
   const [updateCvData, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
   const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
@@ -31,13 +34,13 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
   const allSkills = data?.skills ?? [];
   const currentUser = useTypedSelector(state => state.auth.currentUser);
   const isAdmin = currentUser?.role === roles.ADMIN;
-  const isOwner = cv.user?.id === currentUser?.id;
+  const isOwner = cv?.user?.id === currentUser?.id;
 
   const initialValues = {
-    name: cv.name ?? '',
-    description: cv.description ?? '',
-    languages: cv.languages ?? [],
-    skills: cv.skills ?? [],
+    name: cv?.name ?? '',
+    description: cv?.description ?? '',
+    languages: cv?.languages ?? [],
+    skills: cv?.skills ?? [],
   };
 
   const {
@@ -207,28 +210,30 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
     try {
       await updateCvData({
         variables: {
-          id: cv.id,
+          id: cv?.id,
           cv: {
             name: name,
             description: description,
             skills: skills,
             languages: languages,
-            projectsIds: cv.projects?.map(project => project.id) ?? [],
+            projectsIds: cv?.projects?.map(project => project.id) ?? [],
             is_template: true,
           },
         },
       });
-      dispatch(
-        updateCv({
-          id: cv.id,
-          changes: {
-            name: name,
-            description: description,
-            skills: skills,
-            languages: languages,
-          },
-        }),
-      );
+      if (cv) {
+        dispatch(
+          updateCv({
+            id: cv.id,
+            changes: {
+              name: name,
+              description: description,
+              skills: skills,
+              languages: languages,
+            },
+          }),
+        );
+      }
     } catch (error) {
       console.error(error);
     }
@@ -250,6 +255,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
           <Controller
             name="name"
             control={control}
+            rules={{ required: 'Name is required' }}
             render={({ field }) => (
               <TextField
                 sx={{ mt: 3 }}
@@ -257,12 +263,15 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
                 fullWidth
                 {...field}
                 inputProps={{ readOnly: !(isAdmin || isOwner) }}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
             )}
           />
           <Controller
             name="description"
             control={control}
+            rules={{ required: 'Description is required' }}
             render={({ field }) => (
               <TextField
                 sx={{ mt: 3 }}
@@ -272,19 +281,21 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
                 rows={3}
                 {...field}
                 inputProps={{ readOnly: !(isAdmin || isOwner) }}
+                error={!!errors.description}
+                helperText={errors.description?.message}
               />
             )}
           />
           {(isAdmin || isOwner) && (
             <Button sx={{ mt: 3 }} type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-              Update
+              {type}
             </Button>
           )}
         </Box>
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Languages</Typography>
-          {cv.languages ? renderLanguageFields() : null}
+          {languageFields ? renderLanguageFields() : null}
           {(isAdmin || isOwner) && (
             <Button variant="outlined" onClick={handleAddLanguage} fullWidth sx={{ mt: 3 }}>
               Add Language
@@ -294,7 +305,7 @@ export default function CvDetailsForm({ cv }: CvFormProps) {
         <Divider orientation="vertical" flexItem />
         <Box sx={{ width: '32%' }}>
           <Typography variant="h6">Skills</Typography>
-          {cv.skills ? renderSkillFields() : null}
+          {skillFields ? renderSkillFields() : null}
           {(isAdmin || isOwner) && (
             <Button variant="outlined" onClick={handleAddSkill} fullWidth sx={{ mt: 3 }}>
               Add Skill
