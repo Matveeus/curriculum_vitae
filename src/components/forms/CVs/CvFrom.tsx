@@ -212,19 +212,17 @@ export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
           },
         },
       });
-      if (cv) {
-        dispatch(
-          updateCv({
-            id: cv.id,
-            changes: {
-              name: name,
-              description: description,
-              skills: skills,
-              languages: languages,
-            },
-          }),
-        );
-      }
+      dispatch(
+        updateCv({
+          id: cv!.id,
+          changes: {
+            name: name,
+            description: description,
+            skills: skills,
+            languages: languages,
+          },
+        }),
+      );
     } catch (error) {
       console.error(error);
     }
