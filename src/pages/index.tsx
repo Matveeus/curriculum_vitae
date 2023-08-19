@@ -29,20 +29,20 @@ export function Router() {
 
           <Route element={<Private />}>
             <Route path="employees" element={<Employees />} />
-            <Route path="employees/:id" element={<User />}>
-              <Route path="profile" element={<UserProfile />} />
-              <Route path="skills" element={<p>Skills</p>} />
-              <Route path="languages" element={<p>Languages</p>} />
-              <Route path="cvs" element={<p>CVs</p>} />
-            </Route>
-            <Route path="projects" element={<Projects />} />
-            <Route path="projects/:id" element={<ProjectDetails />} />
-            <Route path="cvs" element={<Cvs />} />
-            <Route path="cvs/:id/details" element={<CvDetails />} />
-            <Route path="departments" element={<Departments />} />
-            <Route path="positions" element={<Positions />} />
-            <Route path="skills" element={<Skills />} />
-            <Route path="languages" element={<Languages />} />
+              <Route path="employees/:id" element={<User />}>
+                <Route path="profile" element={<UserProfile />} />
+                <Route path="skills" element={<p>Skills</p>} />
+                <Route path="languages" element={<p>Languages</p>} />
+                <Route path="cvs" element={<p>CVs</p>} />
+              </Route>
+              <Route path="projects" element={<Projects />} />
+              <Route path="projects/:id" element={<ProjectDetails />} />
+              <Route path="cvs" element={<Cvs />} />
+              <Route path="cvs/:id/details" element={<CvDetails />} />
+              <Route path="departments" element={<Departments />} />
+              <Route path="positions" element={<Positions />} />
+              <Route path="skills" element={<Skills />} />
+              <Route path="languages" element={<Languages />} />
           </Route>
         </Route>
       </Routes>
