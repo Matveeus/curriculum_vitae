@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react';
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
+import React, { useCallback, useMemo } from 'react';
 import startCase from 'lodash/startCase';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -10,15 +9,13 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs';
-import roles from '../../../constants/roles';
-import { UPDATE_PROJECT } from '../../../apollo/operations';
+import { CREATE_PROJECT, UPDATE_PROJECT } from '../../../apollo/operations';
 import { useMutation } from '@apollo/client';
 import InfoBar from '../../InfoBar';
-import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from './ProjectFormInterfaces';
+import { DateInputProps, InputValues, NumberInputProps, TextInputProps } from './projectFormInterfaces';
 import { Project } from '../../../apollo/types';
 import { useTypedDispatch } from '../../../hooks/useTypedDispatch';
-import { updateProject } from '../../../store/projectsSlice';
-
+import { addProject, updateProject } from '../../../store/projectsSlice';
 export type FormType = 'create' | 'update';
 
 interface ProjectFormProps {
@@ -27,20 +24,20 @@ interface ProjectFormProps {
   onReset: () => void;
 }
 
-export default function ProjectForm({ project }: ProjectFormProps) {
+export default function ProjectForm({ project, type, onReset }: ProjectFormProps) {
   const dispatch = useTypedDispatch();
-  const [updateProjectData, { loading, error, data }] = useMutation(UPDATE_PROJECT);
-  const currentUser = useTypedSelector(state => state.auth.currentUser);
-  const isAdmin = currentUser?.role === roles.ADMIN;
+  const [update, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_PROJECT);
+  const [create, { loading: createLoading, error: createError, data: createData }] = useMutation(CREATE_PROJECT);
+  const initialStartDate = useMemo(() => dayjs(), []);
 
   const initialValues: InputValues = {
-    name: project.name ?? '',
-    internalName: project.internal_name ?? '',
-    description: project.description ?? '',
-    domain: project.domain ?? '',
-    teamSize: project.team_size ?? 0,
-    startDate: project.start_date ? dayjs(project.start_date) : null,
-    endDate: project.end_date ? dayjs(project.end_date) : null,
+    name: project?.name ?? '',
+    internalName: project?.internal_name ?? '',
+    description: project?.description ?? '',
+    domain: project?.domain ?? '',
+    teamSize: project?.team_size ?? 1,
+    startDate: project?.start_date ? dayjs(project?.start_date) : initialStartDate,
+    endDate: project?.end_date ? dayjs(project.end_date) : null,
   };
 
   const {
@@ -53,12 +50,12 @@ export default function ProjectForm({ project }: ProjectFormProps) {
     values: initialValues,
   });
 
-  const onSubmit: SubmitHandler<InputValues> = async values => {
+  const onUpdate: SubmitHandler<InputValues> = async values => {
     const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
     try {
-      await updateProjectData({
+      await update({
         variables: {
-          id: project.id,
+          id: project!.id,
           project: {
             name: name,
             internal_name: internalName,
@@ -73,7 +70,7 @@ export default function ProjectForm({ project }: ProjectFormProps) {
       });
       dispatch(
         updateProject({
-          id: project.id,
+          id: project!.id,
           changes: {
             name: name,
             internal_name: internalName,
@@ -90,6 +87,30 @@ export default function ProjectForm({ project }: ProjectFormProps) {
     }
   };
 
+  const onCreate: SubmitHandler<InputValues> = async values => {
+    const { name, internalName, description, domain, startDate, endDate, teamSize } = values;
+    try {
+      const { data } = await create({
+        variables: {
+          project: {
+            name: name,
+            internal_name: internalName,
+            description: description,
+            domain: domain,
+            team_size: Number(teamSize),
+            start_date: startDate?.format('YYYY-MM-DD'),
+            end_date: endDate?.format('YYYY-MM-DD'),
+            skillsIds: [],
+          },
+        },
+      });
+      const project = data.createProject;
+      dispatch(addProject(project));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const TextInput = useCallback(
     ({ name, isRequired, rows }: TextInputProps) => (
       <TextField
@@ -98,7 +119,6 @@ export default function ProjectForm({ project }: ProjectFormProps) {
         {...register(name, {
           ...(isRequired ? { required: `${startCase(name)} is required` } : {}),
         })}
-        inputProps={{ readOnly: !isAdmin }}
         fullWidth
         multiline={rows !== undefined}
         rows={rows !== undefined ? rows : 1}
@@ -118,7 +138,6 @@ export default function ProjectForm({ project }: ProjectFormProps) {
         {...register(name, {
           required: `${startCase(name)} is required`,
         })}
-        inputProps={{ readOnly: !isAdmin, min: 1 }}
         fullWidth
       />
     ),
@@ -133,7 +152,6 @@ export default function ProjectForm({ project }: ProjectFormProps) {
         render={({ field }) => (
           <DatePicker
             label={startCase(name)}
-            readOnly={!isAdmin}
             slotProps={{ textField: { fullWidth: true } }}
             value={getValues(name)}
             onChange={date => field.onChange(date)}
@@ -144,13 +162,14 @@ export default function ProjectForm({ project }: ProjectFormProps) {
     [],
   );
 
+  const handlers = {
+    create: onCreate,
+    update: onUpdate,
+  };
+
   return (
     <>
-      <Box
-        sx={{ maxWidth: 720, position: 'absolute', top: '50%', right: '50%', transform: 'translate(50%,-50%)' }}
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <Box component="form" onSubmit={handleSubmit(handlers[type])} onReset={onReset}>
         <Grid container columnSpacing={3} rowSpacing={6}>
           <Grid item xs={12} md={6}>
             <TextInput name="name" isRequired={true} />
@@ -175,17 +194,22 @@ export default function ProjectForm({ project }: ProjectFormProps) {
           <Grid item xs={12} md={12}>
             <TextInput name="description" isRequired={true} rows={3} />
           </Grid>
-          {isAdmin && (
-            <Grid item xs={12} md={6} ml="auto">
-              <Button type="submit" variant="contained" disabled={!isDirty || loading} fullWidth>
-                Update
-              </Button>
-            </Grid>
-          )}
+          <Grid item xs={12} md={6}>
+            <Button type="reset" variant="outlined" fullWidth>
+              cancel
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Button type="submit" variant="contained" disabled={!isDirty || updateLoading || createLoading} fullWidth>
+              {type}
+            </Button>
+          </Grid>
         </Grid>
       </Box>
-      {error ? <InfoBar text={error.message} status="error" /> : null}
-      {data ? <InfoBar text="Project updated successfully" status="success" /> : null}
+      {updateError ? <InfoBar text={updateError.message} status="error" /> : null}
+      {createError ? <InfoBar text={createError.message} status="error" /> : null}
+      {updateData ? <InfoBar text="Project updated successfully" status="success" /> : null}
+      {createData ? <InfoBar text="Project created successfully" status="success" /> : null}
     </>
   );
 }

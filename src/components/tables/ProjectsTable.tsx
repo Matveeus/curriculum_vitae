@@ -8,11 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import roles from '../../constants/roles';
-import ProjectCreationForm from '../forms/Projects/ProjectCreationForm';
 import Search from '../Search';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 import type { MenuItemData } from '../MoreMenu';
 import type { Project } from '../../apollo/types';
 import { useMutation } from '@apollo/client';
@@ -142,11 +140,6 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
           <ProjectForm type={formType} project={projectToUpdate} onReset={handleCloseModal} />
         </DialogContent>
       </Dialog>
-      <Modal open={showModal} onClose={handleCloseModal}>
-        <Box>
-          <ProjectCreationForm handleCloseModal={handleCloseModal} />
-        </Box>
-      </Modal>
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data ? <InfoBar text="Project deleted successfully" status="success" /> : null}
     </>
