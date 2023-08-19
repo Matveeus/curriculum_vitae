@@ -17,6 +17,13 @@ import type { MenuItemData } from '../MoreMenu';
 import type { Project } from '../../apollo/types';
 import { useMutation } from '@apollo/client';
 import InfoBar from '../InfoBar';
+import type { FormType } from '../forms/Projects/ProjectForm';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import DialogContent from '@mui/material/DialogContent';
+import Dialog from '@mui/material/Dialog';
+import ProjectForm from '../forms/Projects/ProjectForm';
 
 interface Data {
   id: string;
@@ -33,6 +40,11 @@ interface ProjectsTableProps {
   projects: Project[];
 }
 
+const modalTitles: Record<FormType, string> = {
+  create: 'Create project',
+  update: 'Update project',
+};
+
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
@@ -40,14 +52,23 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const isAdmin = currentUser?.role === roles.ADMIN;
   const [mutate, { error, data }] = useMutation(DELETE_PROJECT);
   const [showModal, setShowModal] = useState(false);
+  const [formType, setFormType] = useState<FormType>('update');
+  const [projectToUpdate, setProjectToUpdate] = useState<Project | null>(null);
   const [searchInput, setSearchInput] = React.useState('');
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (type: FormType) => {
     setShowModal(true);
+    setFormType(type);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setProjectToUpdate(null);
+  };
+
+  const handleUpdateButtonClick = (project: Project) => {
+    setProjectToUpdate(project);
+    handleOpenModal('update');
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +105,11 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
         disabled: false,
       },
       {
+        text: 'Update project',
+        onClick: () => handleUpdateButtonClick(project),
+        disabled: !isAdmin,
+      },
+      {
         text: 'Delete project',
         onClick: () => handleProjectDeletion(project.id),
         disabled: !isAdmin,
@@ -96,12 +122,26 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
       <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Search onSearchInputChange={handleSearchInputChange} />
         {isAdmin ? (
-          <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={handleOpenModal}>
+          <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={() => handleOpenModal('create')}>
             Create project
           </Button>
         ) : null}
       </Box>
       <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
+
+      <Dialog open={showModal} onClose={handleCloseModal} fullWidth maxWidth="md">
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <DialogTitle>{modalTitles[formType]}</DialogTitle>
+          <Box sx={{ px: 2 }}>
+            <IconButton onClick={handleCloseModal}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Box>
+        <DialogContent>
+          <ProjectForm type={formType} project={projectToUpdate} onReset={handleCloseModal} />
+        </DialogContent>
+      </Dialog>
       <Modal open={showModal} onClose={handleCloseModal}>
         <Box>
           <ProjectCreationForm handleCloseModal={handleCloseModal} />

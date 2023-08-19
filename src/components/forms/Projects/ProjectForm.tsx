@@ -19,11 +19,15 @@ import { Project } from '../../../apollo/types';
 import { useTypedDispatch } from '../../../hooks/useTypedDispatch';
 import { updateProject } from '../../../store/projectsSlice';
 
+export type FormType = 'create' | 'update';
+
 interface ProjectFormProps {
-  project: Project;
+  project: Project | null;
+  type: FormType;
+  onReset: () => void;
 }
 
-export default function ProjectDetailsForm({ project }: ProjectFormProps) {
+export default function ProjectForm({ project }: ProjectFormProps) {
   const dispatch = useTypedDispatch();
   const [updateProjectData, { loading, error, data }] = useMutation(UPDATE_PROJECT);
   const currentUser = useTypedSelector(state => state.auth.currentUser);

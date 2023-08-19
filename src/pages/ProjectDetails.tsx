@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../apollo/operations';
 import InfoBar from '../components/InfoBar';
-import ProjectDetailsForm from '../components/forms/Projects/ProjectDetailsForm';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { addProject, projectsSelectors } from '../store/projectsSlice';
 import { useTypedDispatch } from '../hooks/useTypedDispatch';
@@ -36,7 +35,6 @@ export default function ProjectDetails() {
           { icon: <FolderIcon />, text: project?.name, route: routes.project(project?.id) },
         ]}
       />
-      <ProjectDetailsForm project={project} />
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
