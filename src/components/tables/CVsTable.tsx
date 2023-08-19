@@ -9,13 +9,18 @@ import type { MenuItemData } from '../MoreMenu';
 import Search from '../Search';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
 import roles from '../../constants/roles';
 import { useMutation } from '@apollo/client';
 import { DELETE_CV } from '../../apollo/operations';
 import InfoBar from '../InfoBar';
 import { useTypedDispatch } from '../../hooks/useTypedDispatch';
 import { deleteCv } from '../../store/cvsSlice';
+import Dialog from '@mui/material/Dialog';
+import CvForm from '../forms/CVs/CvFrom';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import AppBar from '@mui/material/AppBar';
+import type { FormType } from '../forms/CVs/CvFrom';
 
 interface Data {
   id: string;
@@ -37,14 +42,23 @@ export default function CVsTable({ cvs }: CVsTableProps) {
   const isAdmin = currentUser?.role === roles.ADMIN;
   const [mutate, { error, data }] = useMutation(DELETE_CV);
   const [showModal, setShowModal] = useState(false);
+  const [formType, setFormType] = useState<FormType>('update');
+  const [cvToUpdate, setCvToUpdate] = useState<Cv | null>(null);
   const [searchInput, setSearchInput] = React.useState('');
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (type: FormType) => {
     setShowModal(true);
+    setFormType(type);
+  };
+
+  const handleUpdateButtonClick = (cv: Cv) => {
+    setCvToUpdate(cv);
+    handleOpenModal('update');
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setCvToUpdate(null);
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +91,11 @@ export default function CVsTable({ cvs }: CVsTableProps) {
         disabled: false,
       },
       {
+        text: 'Update CV',
+        onClick: () => handleUpdateButtonClick(cv),
+        disabled: !(isAdmin || cv.user?.id === currentUser?.id),
+      },
+      {
         text: 'Delete CV',
         onClick: () => handleCVDeletion(cv.id),
         disabled: !(isAdmin || cv.user?.id === currentUser?.id),
@@ -88,14 +107,23 @@ export default function CVsTable({ cvs }: CVsTableProps) {
     <>
       <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Search onSearchInputChange={handleSearchInputChange} />
-        <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={handleOpenModal}>
+        <Button sx={{ borderRadius: 0 }} variant="outlined" onClick={() => handleOpenModal('create')}>
           Create cv
         </Button>
       </Box>
       <InitialTable columns={columns} rows={rows} filterBy={searchInput} />
-      <Modal open={showModal} onClose={handleCloseModal}>
-        <Box>CV FORM</Box>
-      </Modal>
+      <Dialog fullScreen open={showModal} onClose={handleCloseModal}>
+        <AppBar sx={{ position: 'relative' }}>
+          <Toolbar>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div" textAlign="center">
+              {`${formType} cv`}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Box sx={{ m: '0 20px' }}>
+          <CvForm type={formType} cv={cvToUpdate} onReset={handleCloseModal} />
+        </Box>
+      </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}
       {data ? <InfoBar text="CV deleted successfully" status="success" /> : null}
     </>

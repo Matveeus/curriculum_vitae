@@ -8,7 +8,6 @@ import { addCv, cvsSelectors } from '../store/cvsSlice';
 import { useQuery } from '@apollo/client';
 import { GET_CV } from '../apollo/operations';
 import InfoBar from '../components/InfoBar';
-import CvDetailsForm from '../components/forms/CVs/CvDetailsFrom';
 import ContactIcon from '@mui/icons-material/ContactPageOutlined';
 
 export default function ProjectDetails() {
@@ -36,7 +35,6 @@ export default function ProjectDetails() {
           { icon: <ContactIcon />, text: cv?.name, route: routes.cv(cv?.id) },
         ]}
       />
-      <CvDetailsForm cv={cv} />
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
