@@ -21,13 +21,14 @@ export type FormType = 'create' | 'update';
 interface ProjectFormProps {
   project: Project | null;
   type: FormType;
+  onSubmit: () => void;
   onReset: () => void;
 }
 
-export default function ProjectForm({ project, type, onReset }: ProjectFormProps) {
+export default function ProjectForm({ project, type, onReset, onSubmit }: ProjectFormProps) {
   const dispatch = useTypedDispatch();
-  const [update, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_PROJECT);
-  const [create, { loading: createLoading, error: createError, data: createData }] = useMutation(CREATE_PROJECT);
+  const [update, { loading: updateLoading, error: updateError }] = useMutation(UPDATE_PROJECT);
+  const [create, { loading: createLoading, error: createError }] = useMutation(CREATE_PROJECT);
   const initialStartDate = useMemo(() => dayjs(), []);
 
   const initialValues: InputValues = {
@@ -82,6 +83,7 @@ export default function ProjectForm({ project, type, onReset }: ProjectFormProps
           },
         }),
       );
+      onSubmit();
     } catch (error) {
       console.error(error);
     }
@@ -106,6 +108,7 @@ export default function ProjectForm({ project, type, onReset }: ProjectFormProps
       });
       const project = data.createProject;
       dispatch(addProject(project));
+      onSubmit();
     } catch (error) {
       console.error(error);
     }
@@ -206,10 +209,7 @@ export default function ProjectForm({ project, type, onReset }: ProjectFormProps
           </Grid>
         </Grid>
       </Box>
-      {updateError ? <InfoBar text={updateError.message} status="error" /> : null}
-      {createError ? <InfoBar text={createError.message} status="error" /> : null}
-      {updateData ? <InfoBar text="Project updated successfully" status="success" /> : null}
-      {createData ? <InfoBar text="Project created successfully" status="success" /> : null}
+      {(updateError || createError) && <InfoBar text={updateError?.message || createError?.message} status="error" />}
     </>
   );
 }

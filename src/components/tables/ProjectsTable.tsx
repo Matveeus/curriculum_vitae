@@ -137,7 +137,12 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
           </Box>
         </Box>
         <DialogContent>
-          <ProjectForm type={formType} project={projectToUpdate} onReset={handleCloseModal} />
+          <ProjectForm
+            type={formType}
+            project={projectToUpdate}
+            onReset={handleCloseModal}
+            onSubmit={handleCloseModal}
+          />
         </DialogContent>
       </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}
