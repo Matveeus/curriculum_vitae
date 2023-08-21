@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 
 interface ErrorBarProps {
-  text: string | undefined;
+  text: string;
   status: 'success' | 'info' | 'warning' | 'error';
 }
 

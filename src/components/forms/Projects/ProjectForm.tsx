@@ -209,7 +209,7 @@ export default function ProjectForm({ project, type, onReset, onSubmit }: Projec
           </Grid>
         </Grid>
       </Box>
-      {(updateError || createError) && <InfoBar text={updateError?.message || createError?.message} status="error" />}
+      {(updateError || createError) && <InfoBar text={updateError!.message || createError!.message} status="error" />}
     </>
   );
 }
