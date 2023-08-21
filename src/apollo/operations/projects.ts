@@ -10,6 +10,9 @@ const PROJECT_DATA = gql`
     end_date
     domain
     team_size
+    tech_stack {
+      id
+    }
   }
 `;
 
@@ -40,18 +43,10 @@ export const UPDATE_PROJECT = gql`
 `;
 
 export const CREATE_PROJECT = gql`
+  ${PROJECT_DATA}
   mutation createProject($project: ProjectInput!) {
     createProject(project: $project) {
-      name
-      internal_name
-      description
-      domain
-      start_date
-      end_date
-      team_size
-      tech_stack {
-        id
-      }
+      ...ProjectData
     }
   }
 `;

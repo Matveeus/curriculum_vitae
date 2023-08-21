@@ -44,9 +44,7 @@ export default function ProjectDetails() {
           { icon: <FolderIcon />, text: project?.name, route: routes.project(project?.id) },
         ]}
       />
-
       <Details entity={omit(project, 'id')} mt={4} />
-
       {error ? <InfoBar text={error.message} status="error" /> : null}
     </>
   );
