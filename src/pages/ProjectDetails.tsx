@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import omit from 'lodash/omit';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../apollo/operations';
-import InfoBar from '../components/InfoBar';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { addProject, projectsSelectors } from '../store/projectsSlice';
 import { useTypedDispatch } from '../hooks/useTypedDispatch';
