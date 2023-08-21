@@ -259,7 +259,7 @@ export default function CvDetailsForm({ type, cv, onReset, onSubmit }: CvFormPro
     update: onUpdate,
   };
 
-  const error = queryError || updateError || addError;
+  const error = queryError?.message || updateError?.message || addError?.message;
 
   if (loading) {
     return <Loader />;
@@ -331,7 +331,7 @@ export default function CvDetailsForm({ type, cv, onReset, onSubmit }: CvFormPro
           </Button>
         </Box>
       </Box>
-      {error ? <InfoBar text={error.message} status="error" /> : null}
+      {error ? <InfoBar text={error} status="error" /> : null}
     </>
   );
 }

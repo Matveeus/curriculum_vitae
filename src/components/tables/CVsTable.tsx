@@ -35,6 +35,11 @@ interface CVsTableProps {
   cvs: Cv[];
 }
 
+const modalTitles: Record<FormType, string> = {
+  create: 'Create cv',
+  update: 'Update cv',
+};
+
 export default function CVsTable({ cvs }: CVsTableProps) {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
@@ -116,7 +121,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div" textAlign="center">
-              {`${formType} cv`}
+              {modalTitles[formType]}
             </Typography>
           </Toolbar>
         </AppBar>
