@@ -170,6 +170,8 @@ export default function ProjectForm({ project, type, onReset, onSubmit }: Projec
     update: onUpdate,
   };
 
+  const error = createError?.message || updateError?.message;
+
   return (
     <>
       <Box component="form" onSubmit={handleSubmit(handlers[type])} onReset={onReset}>
@@ -209,7 +211,7 @@ export default function ProjectForm({ project, type, onReset, onSubmit }: Projec
           </Grid>
         </Grid>
       </Box>
-      {(updateError || createError) && <InfoBar text={updateError?.message || createError?.message} status="error" />}
+      {error && <InfoBar text={error} status="error" />}
     </>
   );
 }
