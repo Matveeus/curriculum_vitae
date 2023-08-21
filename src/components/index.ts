@@ -4,6 +4,7 @@ import Loader from './Loader';
 import LinkTab from './LinkTab';
 import InfoBar from './InfoBar';
 import BreadcrumbsNav from './BreadcrumbsNav';
+import Details from './Details';
 import EmployeesTable from './tables/EmployeesTable';
 import Header from './header/Header';
 import AuthForm from './auth/AuthForm';
@@ -20,6 +21,7 @@ export {
   LinkTab,
   InfoBar,
   BreadcrumbsNav,
+  Details,
   EmployeesTable,
   Header,
   AuthForm,
