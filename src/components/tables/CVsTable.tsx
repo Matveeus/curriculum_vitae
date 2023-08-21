@@ -121,7 +121,7 @@ export default function CVsTable({ cvs }: CVsTableProps) {
           </Toolbar>
         </AppBar>
         <Box sx={{ m: '0 20px' }}>
-          <CvForm type={formType} cv={cvToUpdate} onReset={handleCloseModal} />
+          <CvForm type={formType} cv={cvToUpdate} onReset={handleCloseModal} onSubmit={handleCloseModal} />
         </Box>
       </Dialog>
       {error ? <InfoBar text={error.message} status="error" /> : null}
