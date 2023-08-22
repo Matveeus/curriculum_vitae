@@ -23,14 +23,15 @@ export type FormType = 'create' | 'update';
 interface CvFormProps {
   cv: Cv | null;
   type: FormType;
+  onSubmit: () => void;
   onReset: () => void;
 }
 
-export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
+export default function CvDetailsForm({ type, cv, onReset, onSubmit }: CvFormProps) {
   const dispatch = useTypedDispatch();
-  const [update, { loading: updateLoading, error: updateError, data: updateData }] = useMutation(UPDATE_CV);
-  const [create, { loading: addLoading, error: addError, data: addData }] = useMutation(CREATE_CV);
-  const { loading, error, data } = useQuery<QueryResult>(GET_CV_LISTS);
+  const [update, { error: updateError }] = useMutation(UPDATE_CV);
+  const [create, { error: addError }] = useMutation(CREATE_CV);
+  const { loading, error: queryError, data } = useQuery<QueryResult>(GET_CV_LISTS);
   const allLanguages = data?.languages ?? [];
   const allSkills = data?.skills ?? [];
   const currentUser = useTypedSelector(state => state.auth.currentUser);
@@ -223,6 +224,7 @@ export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
           },
         }),
       );
+      onSubmit();
     } catch (error) {
       console.error(error);
     }
@@ -246,6 +248,7 @@ export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
       });
       const cv = data.createCv;
       dispatch(addCv(cv));
+      onSubmit();
     } catch (error) {
       console.error(error);
     }
@@ -256,7 +259,9 @@ export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
     update: onUpdate,
   };
 
-  if (loading || updateLoading || addLoading) {
+  const error = queryError?.message || updateError?.message || addError?.message;
+
+  if (loading) {
     return <Loader />;
   }
 
@@ -326,11 +331,7 @@ export default function CvDetailsForm({ type, cv, onReset }: CvFormProps) {
           </Button>
         </Box>
       </Box>
-      {error ? <InfoBar text={error.message} status="error" /> : null}
-      {updateError ? <InfoBar text={updateError.message} status="error" /> : null}
-      {addError ? <InfoBar text={addError.message} status="error" /> : null}
-      {updateData ? <InfoBar text="CV updated successfully" status="success" /> : null}
-      {addData ? <InfoBar text="CV created successfully" status="success" /> : null}
+      {error ? <InfoBar text={error} status="error" /> : null}
     </>
   );
 }
