@@ -9,7 +9,7 @@ import Private from './Private';
 import Employees from './Employees';
 import Projects from './Projects';
 import Cvs from './Cvs';
-import CvDetails from './CvDetailes';
+import CvDetails from './CvDetails';
 import Departments from './Departments';
 import Positions from './Positions';
 import Skills from './Skills';
